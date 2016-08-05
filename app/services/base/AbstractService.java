@@ -7,8 +7,8 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import models.base.AbstractEntity;
+import play.Logger;
 import repositories.interfaces.Repository;
 import services.interfaces.GenericService;
 import utils.HbUtils;
@@ -16,7 +16,7 @@ import utils.HbUtils;
 /**
  * Created by eduardo on 12/03/15.
  */
-@Slf4j
+
 @AllArgsConstructor
 public abstract class AbstractService<T extends AbstractEntity> implements GenericService<T>
 {
@@ -32,9 +32,9 @@ public abstract class AbstractService<T extends AbstractEntity> implements Gener
    */
 
   @Override
-  public Collection<T> save(Collection<T> entity)
+  public Collection<T> save(final Collection<T> entity)
   {
-    return repo.persist(entity);
+    return this.repo.persist(entity);
   }
 
   /**
@@ -47,9 +47,9 @@ public abstract class AbstractService<T extends AbstractEntity> implements Gener
    */
 
   @Override
-  public Optional<T> save(T entity)
+  public Optional<T> save(final T entity)
   {
-    return repo.persist(entity);
+    return this.repo.persist(entity);
   }
 
   /**
@@ -64,20 +64,20 @@ public abstract class AbstractService<T extends AbstractEntity> implements Gener
    */
 
   @Override
-  public Optional<T> update(Long id, Object updated)
+  public Optional<T> update(final Long id, final Object updated)
   {
-    Optional<T> u = repo.get(id);
+    final Optional<T> u = this.repo.get(id);
 
     if (!u.isPresent())
     {
-      log.error("Object not found");
+      Logger.error("Object not found");
       return Optional.empty();
     }
     else
     {
-      log.debug("Updating object");
+      Logger.debug("Updating object");
       copyProperties(updated, u.get());
-      return repo.persist(u.get());
+      return this.repo.persist(u.get());
     }
   }
 
@@ -92,9 +92,9 @@ public abstract class AbstractService<T extends AbstractEntity> implements Gener
    *
    */
   @Override
-  public boolean delete(Long id)
+  public boolean delete(final Long id)
   {
-    return repo.remove(id);
+    return this.repo.remove(id);
   }
 
   /**
@@ -106,7 +106,7 @@ public abstract class AbstractService<T extends AbstractEntity> implements Gener
   @Override
   public List<T> findAll()
   {
-    return repo.get();
+    return this.repo.get();
   }
 
   /**
@@ -118,40 +118,40 @@ public abstract class AbstractService<T extends AbstractEntity> implements Gener
    * @return The found person. If no person is found, this method returns null.
    */
   @Override
-  public Optional<T> findById(Long id)
+  public Optional<T> findById(final Long id)
   {
 
-    Optional<T> result = repo.get(id);
+    final Optional<T> result = this.repo.get(id);
     if (result.isPresent())
     {
-      T object = result.get();
+      final T object = result.get();
       return Optional.of(HbUtils.deproxy(object));
     }
     return Optional.empty();
   }
 
   @Override
-  public String[] getNullPropertyNames(Object source)
+  public String[] getNullPropertyNames(final Object source)
   {
     final BeanWrapper src = new BeanWrapperImpl(source);
-    java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+    final java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
-    Set<String> emptyNames = new HashSet<String>();
-    for (java.beans.PropertyDescriptor pd : pds)
+    final Set<String> emptyNames = new HashSet<>();
+    for (final java.beans.PropertyDescriptor pd : pds)
     {
-      Object srcValue = src.getPropertyValue(pd.getName());
+      final Object srcValue = src.getPropertyValue(pd.getName());
       if (srcValue == null)
       {
         emptyNames.add(pd.getName());
       }
     }
-    String[] result = new String[emptyNames.size()];
+    final String[] result = new String[emptyNames.size()];
     return emptyNames.toArray(result);
   }
 
   // then use Spring BeanUtils to copy and ignore null
   @Override
-  public void copyProperties(Object src, Object target)
+  public void copyProperties(final Object src, final Object target)
   {
     BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
   }

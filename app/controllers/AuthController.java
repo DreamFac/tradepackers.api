@@ -14,10 +14,12 @@ import models.User;
 import models.security.Token;
 import play.data.Form;
 import play.data.FormFactory;
+import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import services.interfaces.UserService;
+import utils.Cripto;
 
 /**
  * Created by eduardo on 4/08/16.
@@ -28,11 +30,13 @@ public class AuthController extends Controller
   FormFactory formFactory;
 
   @Inject
-  public AuthController(final UserService userService)
+  public AuthController(final UserService userService, final FormFactory formFactory)
   {
     this.userService = userService;
+    this.formFactory = formFactory;
   }
 
+  @Transactional
   public Result signUp()
   {
     final Form<LoginDTO> form = this.formFactory.form(LoginDTO.class).bindFromRequest();
@@ -50,7 +54,7 @@ public class AuthController extends Controller
       }
       final User user = new User();
       user.setEmail(loginDTO.getEmail());
-      user.setPassword(loginDTO.getPassword());
+      user.setPassword(Cripto.getMD5(loginDTO.getPassword()));
       final Optional<User> savedUser = this.userService.save(user);
       if (!savedUser.isPresent())
       {
@@ -63,6 +67,7 @@ public class AuthController extends Controller
     }
   }
 
+  @Transactional
   public Result login()
   {
     final Form<LoginDTO> loginForm = this.formFactory.form(LoginDTO.class).bindFromRequest();
@@ -87,6 +92,7 @@ public class AuthController extends Controller
     }
   }
 
+  @Transactional
   @Authentication
   public Result logout()
   {
@@ -101,6 +107,7 @@ public class AuthController extends Controller
 
   }
 
+  @Transactional
   private Result verifyUser(final User user)
   {
     final Optional<User> userResult = this.userService.login(user);
@@ -117,8 +124,6 @@ public class AuthController extends Controller
 
     final Token token = tokenResult.get();
     final ObjectNode authTokenJson = Json.newObject();
-    authTokenJson.put("id", user.getId());
-    authTokenJson.put("name", user.firstName + " " + user.lastName);
     authTokenJson.put(AuthenticationAction.AUTH_TOKEN, token.getAuthToken());
     return ok(authTokenJson);
   }

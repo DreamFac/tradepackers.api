@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.criteria.CriteriaQuery;
-
 import models.base.AbstractEntity;
 
 /**
@@ -14,11 +12,6 @@ import models.base.AbstractEntity;
 public interface Repository<T extends AbstractEntity>
 {
   Optional<T> get(Long id);
-
-  /**
-   * return all entities that match the given predicate.
-   */
-  List<T> get(CriteriaQuery<T> query);
 
   List<T> get();
 
@@ -35,8 +28,4 @@ public interface Repository<T extends AbstractEntity>
    */
   boolean remove(Long id);
 
-  /**
-   * remove all entities that match the given predicate.
-   */
-  void remove(CriteriaQuery<T> query);
 }

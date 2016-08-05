@@ -20,7 +20,7 @@ import services.interfaces.UserService;
 public class AuthenticationAction extends Action<AuthenticationAction>
 {
   public final static String AUTH_TOKEN_HEADER = "X-AUTH-TOKEN";
-  public static final String AUTH_TOKEN = "authToken";
+  public static final String AUTH_TOKEN = "Token";
 
   private final TokenRepository tokenRepository;
   private final UserService userService;

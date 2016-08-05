@@ -5,18 +5,17 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import lombok.Getter;
 import models.base.AbstractEntity;
-import play.db.jpa.JPA;
+import play.db.jpa.JPAApi;
 import repositories.interfaces.Repository;
 
 /**
@@ -25,67 +24,61 @@ import repositories.interfaces.Repository;
 public class JpaRepository<T extends AbstractEntity> implements Repository<T>
 {
 
+  @Getter
+  private final JPAApi jpaApi;
   private Class<T> type;
+
+  @Inject
+  public JpaRepository(final JPAApi jpaApi)
+  {
+    this.jpaApi = jpaApi;
+  }
 
   @PostConstruct
   public void init()
   {
-    ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
+    final ParameterizedType genericSuperclass =
+        (ParameterizedType) getClass().getGenericSuperclass();
     this.type = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
   }
 
   @Override
-  public Optional<T> get(Long id)
+  public Optional<T> get(final Long id)
   {
-    return Optional.ofNullable(run(entityManager ->
+    return Optional.ofNullable(this.jpaApi.withTransaction(entityManager ->
     {
-      return entityManager.find(type, id);
+      return entityManager.find(this.type, id);
     }));
-  }
-
-  @Override
-  public List<T> get(final CriteriaQuery<T> criteriaQuery)
-  {
-    List<T> resultList = run(entityManager ->
-    {
-      final TypedQuery<T> query = entityManager.createQuery(criteriaQuery);
-      return query.getResultList();
-    });
-
-    return resultList;
   }
 
   @Override
   public List<T> get()
   {
-    List<T> resultList = run(entityManager ->
+    return this.jpaApi.withTransaction(entityManager ->
     {
       final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-      final CriteriaQuery<T> criteria = criteriaBuilder.createQuery(type);
-
-      final Root<T> root = criteria.from(type);
+      final CriteriaQuery<T> criteria = criteriaBuilder.createQuery(this.type);
+      final Root<T> root = criteria.from(this.type);
       criteria.select(root);
 
       final TypedQuery<T> query = entityManager.createQuery(criteria);
       return query.getResultList();
     });
-
-    return resultList;
   }
 
   @Override
-  public Optional<T> persist(T entity)
+  public Optional<T> persist(final T entity)
   {
-    return Optional.ofNullable(runInTransaction(entityManager ->
+    return Optional.ofNullable(this.jpaApi.withTransaction(entityManager ->
     {
       return entityManager.merge(entity);
     }));
   }
 
   @Override
-  public Collection<T> persist(Collection<T> entities)
+  public Collection<T> persist(final Collection<T> entities)
   {
-    return runInTransaction(entityManager ->
+    return this.jpaApi.withTransaction(entityManager ->
     {
       entities.forEach(entityManager::merge);
       return entities;
@@ -93,29 +86,30 @@ public class JpaRepository<T extends AbstractEntity> implements Repository<T>
   }
 
   @Override
-  public boolean remove(T entity)
+  public boolean remove(final T entity)
   {
     return remove(entity.getId());
   }
 
   @Override
-  public void remove(Collection<T> entities)
+  public void remove(final Collection<T> entities)
   {
-    runInTransaction(entityManager ->
+    this.jpaApi.withTransaction(() ->
     {
       entities
           .stream()
           .map(AbstractEntity::getId)
-          .map(id -> entityManager.find(type, id))
+          .map(id -> this.jpaApi.em().find(this.type, id))
           .filter(Objects::nonNull)
-          .forEach(entityManager::remove);
+          .forEach(this.jpaApi.em()::remove);
     });
+
   }
 
   @Override
-  public boolean remove(Long id)
+  public boolean remove(final Long id)
   {
-    return runInTransaction(entityManager ->
+    return this.jpaApi.withTransaction(entityManager ->
     {
       final Optional<T> managedEntity = get(id);
       if (managedEntity.isPresent())
@@ -127,54 +121,4 @@ public class JpaRepository<T extends AbstractEntity> implements Repository<T>
     });
   }
 
-  @Override
-  public void remove(CriteriaQuery<T> query)
-  {
-    remove(get(query));
-  }
-
-  private <R> R run(Function<EntityManager, R> function)
-  {
-    final EntityManager entityManager = JPA.em();
-    try
-    {
-      return function.apply(entityManager);
-    }
-    finally
-    {
-      entityManager.close();
-    }
-  }
-
-  private void run(Consumer<EntityManager> function)
-  {
-    run(entityManager ->
-    {
-      function.accept(entityManager);
-      return null;
-    });
-  }
-
-  private <R> R runInTransaction(Function<EntityManager, R> function)
-  {
-    return run(entityManager ->
-    {
-      entityManager.getTransaction().begin();
-
-      final R result = function.apply(entityManager);
-
-      entityManager.getTransaction().commit();
-
-      return result;
-    });
-  }
-
-  private void runInTransaction(Consumer<EntityManager> function)
-  {
-    runInTransaction(entityManager ->
-    {
-      function.accept(entityManager);
-      return null;
-    });
-  }
 }

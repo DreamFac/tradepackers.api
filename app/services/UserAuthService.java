@@ -9,20 +9,20 @@ import javax.inject.Singleton;
 import org.joda.time.DateTime;
 
 import constants.UserLoginStatus;
-import lombok.extern.slf4j.Slf4j;
 import models.User;
 import models.security.Token;
+import play.Logger;
 import play.mvc.Http;
 import repositories.interfaces.TokenRepository;
 import repositories.interfaces.UserRepository;
 import services.base.AbstractService;
 import services.interfaces.UserService;
+import utils.Cripto;
 
 /**
  * Created by eduardo on 4/08/16.
  */
 @Singleton
-@Slf4j
 public class UserAuthService extends AbstractService<User> implements UserService
 {
 
@@ -40,7 +40,7 @@ public class UserAuthService extends AbstractService<User> implements UserServic
   @Override
   public Optional<User> findByEmailAndPassword(final String email, final String password)
   {
-    return this.userRepository.findByEmailAndPassword(email, password);
+    return this.userRepository.findByEmailAndPassword(email, Cripto.getMD5(password));
   }
 
   @Override
@@ -106,7 +106,7 @@ public class UserAuthService extends AbstractService<User> implements UserServic
       token.setStatus(UserLoginStatus.OUT);
       this.tokenRepository.persist(token);
     }
-    log.error("No token found for userId: {0}", userId);
+    Logger.error("No token found for userId: {0}", userId);
 
   }
 
