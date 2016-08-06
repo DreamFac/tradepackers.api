@@ -4,14 +4,17 @@ import javax.persistence.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
 import models.base.AbstractEntity;
 import play.data.validation.Constraints;
 
 @Entity
 @Getter
 @Setter
+@Builder
 public class User extends AbstractEntity
 {
 

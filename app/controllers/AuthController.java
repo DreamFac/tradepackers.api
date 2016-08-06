@@ -49,32 +49,55 @@ public class AuthController extends Controller
     else
     {
       final LoginDTO loginDTO = form.get();
-      final Optional<User> userResult = this.userService.finByEmail(loginDTO.email);
+      final Optional<User> userResult = this.userService.finByEmail(loginDTO.getEmail());
+
       if (userResult.isPresent())
       {
         Logger.error("[{}] User id [{}] alrady exist: ", getClass(), userResult.get().getId());
         return status(StatusCode.USER_EXISTS, "User already exists");
       }
-      final User user = new User();
-      user.setEmail(loginDTO.getEmail());
-      user.setPassword(Cripto.getMD5(loginDTO.getPassword()));
-      final Optional<User> savedUser = this.userService.save(user);
+
+      final Optional<User> savedUser = this.userService.save(User.builder()
+          .email(loginDTO.getEmail())
+          .password(Cripto.getMD5(loginDTO.getPassword()))
+          .build());
+
       if (!savedUser.isPresent())
       {
         Logger.error("[{}] Something went wrong when trying to save the user: [{}] after signup",
-            getClass(), user.getEmail());
+            getClass(), loginDTO.getEmail());
         return internalServerError();
       }
       else
       {
-        return verifyUser(savedUser.get());
+        return processLogin(loginDTO.getEmail(), loginDTO.getPassword());
       }
     }
+  }
+
+  private Result processLogin(final String email, final String password)
+  {
+
+    final ObjectNode jsonResponse = Json.newObject();
+    final Optional<Token> tokenResult = this.userService.login(email, password);
+
+    if (!tokenResult.isPresent())
+    {
+      Logger.error("[{}] Internal server error, couldn't login: ", getClass());
+      return internalServerError("Internal server error, couldn't login:");
+    }
+
+    final Token token = tokenResult.get();
+
+    jsonResponse.put(AuthenticationAction.AUTH_TOKEN, token.getAuthToken());
+
+    return ok(jsonResponse);
   }
 
   @Transactional
   public Result login()
   {
+
     final Form<LoginDTO> loginForm = this.formFactory.form(LoginDTO.class).bindFromRequest();
 
     if (loginForm.hasErrors())
@@ -85,18 +108,8 @@ public class AuthController extends Controller
 
     final LoginDTO loginDTO = loginForm.get();
 
-    final Optional<User> userResult =
-        this.userService.findByEmailAndPassword(loginDTO.getEmail(), loginDTO.getPassword());
+    return processLogin(loginDTO.getEmail(), loginDTO.getPassword());
 
-    if (!userResult.isPresent())
-    {
-      Logger.error("[{}] User does not exist: ", getClass());
-      return notFound("User does not exist");
-    }
-    else
-    {
-      return verifyUser(userResult.get());
-    }
   }
 
   @Transactional
@@ -115,27 +128,6 @@ public class AuthController extends Controller
     Logger.error("[{}] there is not logged in user", getClass());
     return internalServerError("there is not logged in user");
 
-  }
-
-  @Transactional
-  private Result verifyUser(final User user)
-  {
-    final Optional<User> userResult = this.userService.login(user);
-    if (!userResult.isPresent())
-    {
-      return status(StatusCode.TOKEN_EXPIRED);
-    }
-    final Optional<Token> tokenResult = this.userService.getUserToken(userResult.get());
-
-    if (!tokenResult.isPresent())
-    {
-      return status(StatusCode.TOKEN_EXPIRED);
-    }
-
-    final Token token = tokenResult.get();
-    final ObjectNode authTokenJson = Json.newObject();
-    authTokenJson.put(AuthenticationAction.AUTH_TOKEN, token.getAuthToken());
-    return ok(authTokenJson);
   }
 
 }

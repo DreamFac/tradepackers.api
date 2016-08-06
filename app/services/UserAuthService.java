@@ -28,6 +28,7 @@ public class UserAuthService extends AbstractService<User> implements UserServic
 
   UserRepository userRepository;
   TokenRepository tokenRepository;
+  private Optional<User> userResult;
 
   @Inject
   public UserAuthService(final UserRepository userRepository, final TokenRepository tokenRepository)
@@ -35,12 +36,6 @@ public class UserAuthService extends AbstractService<User> implements UserServic
     super(userRepository);
     this.userRepository = userRepository;
     this.tokenRepository = tokenRepository;
-  }
-
-  @Override
-  public Optional<User> findByEmailAndPassword(final String email, final String password)
-  {
-    return this.userRepository.findByEmailAndPassword(email, Cripto.getMD5(password));
   }
 
   @Override
@@ -56,21 +51,32 @@ public class UserAuthService extends AbstractService<User> implements UserServic
   }
 
   @Override
-  public Optional<User> login(final User user)
+  public Optional<Token> login(final String email, final String password)
   {
+    final Optional<User> userResult = this.findByEmailAndPassword(email, password);
+
+    if (!userResult.isPresent())
+    {
+      Logger.error("[{}] User with email: {} doesn't exist.", getClass(), email);
+      return Optional.empty();
+    }
+
+    User user = userResult.get();
     final String authToken = UUID.randomUUID().toString();
-    final Optional<Token> tokenResult = this.tokenRepository.findTokenByUserId(user.id);
+    final Optional<Token> tokenResult = this.tokenRepository.findTokenByUserId(user.getId());
+
     Token token = null;
+
     if (!tokenResult.isPresent())
     {
-      token = new Token();
-      token.setStatus(UserLoginStatus.NEW);
+      token = Token.builder().status(UserLoginStatus.NEW).build();
     }
     else
     {
       token = tokenResult.get();
       token.setStatus(UserLoginStatus.ACTIVE);
     }
+
     token.setAuthToken(authToken);
     token.setExpirationDate(DateTime.now().plusDays(1).toDate());
     token.setUser(user);
@@ -79,10 +85,17 @@ public class UserAuthService extends AbstractService<User> implements UserServic
 
     if (!savedTokenResult.isPresent())
     {
+      Logger.error("[{}] Something went wrong couldn't login", getClass());
       return Optional.empty();
     }
 
-    return Optional.ofNullable(user);
+    return Optional.ofNullable(token);
+  }
+
+  @Override
+  public Optional<User> findByEmailAndPassword(final String email, final String password)
+  {
+    return this.userRepository.findByEmailAndPassword(email, Cripto.getMD5(password));
   }
 
   @Override

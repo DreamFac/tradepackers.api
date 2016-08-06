@@ -2,6 +2,7 @@ package dtos;
 
 import lombok.Getter;
 import lombok.Setter;
+
 import play.data.validation.Constraints;
 
 /**
@@ -13,8 +14,8 @@ public class LoginDTO
 {
   @Constraints.Required
   @Constraints.Email
-  public String email;
+  private String email;
 
   @Constraints.Required
-  public String password;
+  private String password;
 }
