@@ -59,10 +59,7 @@ public class UserAuthService extends AbstractService<User> implements UserServic
   public Optional<User> login(final User user)
   {
     final String authToken = UUID.randomUUID().toString();
-
     final Optional<Token> tokenResult = this.tokenRepository.findTokenByUserId(user.id);
-
-    // TODO add logic for expired token
     Token token = null;
     if (!tokenResult.isPresent())
     {
@@ -74,11 +71,16 @@ public class UserAuthService extends AbstractService<User> implements UserServic
       token = tokenResult.get();
       token.setStatus(UserLoginStatus.ACTIVE);
     }
-
     token.setAuthToken(authToken);
     token.setExpirationDate(DateTime.now().plusDays(1).toDate());
     token.setUser(user);
-    this.tokenRepository.persist(token);
+
+    Optional<Token> savedTokenResult = this.tokenRepository.persist(token);
+
+    if (!savedTokenResult.isPresent())
+    {
+      return Optional.empty();
+    }
 
     return Optional.ofNullable(user);
   }

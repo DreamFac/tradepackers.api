@@ -6,6 +6,7 @@ import java.util.concurrent.CompletionStage;
 
 import com.google.inject.Inject;
 
+import constants.StatusCode;
 import models.User;
 import models.security.Token;
 import play.mvc.Action;
@@ -50,7 +51,8 @@ public class AuthenticationAction extends Action<AuthenticationAction>
 
         if (this.userService.isTokenExpired(token))
         {
-          return CompletableFuture.completedFuture(unauthorized("Unauthorized"));
+          return CompletableFuture
+              .completedFuture(status(StatusCode.TOKEN_EXPIRED, "Token expired"));
         }
         else
         {

@@ -12,6 +12,7 @@ import constants.StatusCode;
 import dtos.LoginDTO;
 import models.User;
 import models.security.Token;
+import play.Logger;
 import play.data.Form;
 import play.data.FormFactory;
 import play.db.jpa.Transactional;
@@ -42,6 +43,7 @@ public class AuthController extends Controller
     final Form<LoginDTO> form = this.formFactory.form(LoginDTO.class).bindFromRequest();
     if (form.hasErrors())
     {
+      Logger.error("[{}] Form errors: {}", getClass(), form.errorsAsJson());
       return badRequest(form.errorsAsJson());
     }
     else
@@ -50,6 +52,7 @@ public class AuthController extends Controller
       final Optional<User> userResult = this.userService.finByEmail(loginDTO.email);
       if (userResult.isPresent())
       {
+        Logger.error("[{}] User id [{}] alrady exist: ", getClass(), userResult.get().getId());
         return status(StatusCode.USER_EXISTS, "User already exists");
       }
       final User user = new User();
@@ -58,7 +61,9 @@ public class AuthController extends Controller
       final Optional<User> savedUser = this.userService.save(user);
       if (!savedUser.isPresent())
       {
-        return status(StatusCode.BAD_CREDENTIALS);
+        Logger.error("[{}] Something went wrong when trying to save the user: [{}] after signup",
+            getClass(), user.getEmail());
+        return internalServerError();
       }
       else
       {
@@ -74,6 +79,7 @@ public class AuthController extends Controller
 
     if (loginForm.hasErrors())
     {
+      Logger.error("[{}] Form errors: {}", getClass(), loginForm.errorsAsJson());
       return badRequest(loginForm.errorsAsJson());
     }
 
@@ -84,7 +90,8 @@ public class AuthController extends Controller
 
     if (!userResult.isPresent())
     {
-      return status(StatusCode.BAD_CREDENTIALS);
+      Logger.error("[{}] User does not exist: ", getClass());
+      return notFound("User does not exist");
     }
     else
     {
@@ -100,10 +107,13 @@ public class AuthController extends Controller
     final Optional<User> userResulr = this.userService.getLoggedInUser();
     if (userResulr.isPresent())
     {
+      long userId = userResulr.get().getId();
       this.userService.logout(userResulr.get().getId());
+      Logger.error("[{}] user id: [{}] logged out", getClass(), userId);
       return ok("logged out");
     }
-    return internalServerError("Please try again something went wrong");
+    Logger.error("[{}] there is not logged in user", getClass());
+    return internalServerError("there is not logged in user");
 
   }
 
