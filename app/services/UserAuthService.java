@@ -61,7 +61,7 @@ public class UserAuthService extends AbstractService<User> implements UserServic
       return Optional.empty();
     }
 
-    User user = userResult.get();
+    final User user = userResult.get();
     final String authToken = UUID.randomUUID().toString();
     final Optional<Token> tokenResult = this.tokenRepository.findTokenByUserId(user.getId());
 
@@ -69,7 +69,8 @@ public class UserAuthService extends AbstractService<User> implements UserServic
 
     if (!tokenResult.isPresent())
     {
-      token = Token.builder().status(UserLoginStatus.NEW).build();
+      token = new Token();
+      token.setStatus(UserLoginStatus.NEW);
     }
     else
     {
@@ -81,7 +82,7 @@ public class UserAuthService extends AbstractService<User> implements UserServic
     token.setExpirationDate(DateTime.now().plusDays(1).toDate());
     token.setUser(user);
 
-    Optional<Token> savedTokenResult = this.tokenRepository.persist(token);
+    final Optional<Token> savedTokenResult = this.tokenRepository.persist(token);
 
     if (!savedTokenResult.isPresent())
     {
@@ -120,14 +121,25 @@ public class UserAuthService extends AbstractService<User> implements UserServic
       token.setAuthToken(null);
       token.setStatus(UserLoginStatus.OUT);
       this.tokenRepository.persist(token);
+      Logger.debug("[{}] User with userId: {} logged out", getClass(), userId);
     }
-    Logger.error("No token found for userId: {0}", userId);
-
+    else
+    {
+      Logger.error("[{}] No token found for userId: {}", getClass(), userId);
+    }
   }
 
   @Override
   public Optional<User> getLoggedInUser()
   {
     return Optional.ofNullable((User) Http.Context.current().args.get("user"));
+  }
+
+  @Override
+  public Optional<User> create(final User user)
+  {
+    final String password = Cripto.getMD5(user.getPassword());
+    user.setPassword(password);
+    return this.save(user);
   }
 }

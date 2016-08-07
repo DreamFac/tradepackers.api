@@ -20,7 +20,6 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import services.interfaces.UserService;
-import utils.Cripto;
 
 /**
  * Created by eduardo on 4/08/16.
@@ -57,10 +56,10 @@ public class AuthController extends Controller
         return status(StatusCode.USER_EXISTS, "User already exists");
       }
 
-      final Optional<User> savedUser = this.userService.save(User.builder()
-          .email(loginDTO.getEmail())
-          .password(Cripto.getMD5(loginDTO.getPassword()))
-          .build());
+      final User user = new User();
+      user.setEmail((loginDTO.getEmail()));
+      user.setPassword(loginDTO.getPassword());
+      final Optional<User> savedUser = this.userService.create(user);
 
       if (!savedUser.isPresent())
       {
@@ -73,25 +72,6 @@ public class AuthController extends Controller
         return processLogin(loginDTO.getEmail(), loginDTO.getPassword());
       }
     }
-  }
-
-  private Result processLogin(final String email, final String password)
-  {
-
-    final ObjectNode jsonResponse = Json.newObject();
-    final Optional<Token> tokenResult = this.userService.login(email, password);
-
-    if (!tokenResult.isPresent())
-    {
-      Logger.error("[{}] Internal server error, couldn't login: ", getClass());
-      return internalServerError("Internal server error, couldn't login:");
-    }
-
-    final Token token = tokenResult.get();
-
-    jsonResponse.put(AuthenticationAction.AUTH_TOKEN, token.getAuthToken());
-
-    return ok(jsonResponse);
   }
 
   @Transactional
@@ -120,7 +100,7 @@ public class AuthController extends Controller
     final Optional<User> userResulr = this.userService.getLoggedInUser();
     if (userResulr.isPresent())
     {
-      long userId = userResulr.get().getId();
+      final long userId = userResulr.get().getId();
       this.userService.logout(userResulr.get().getId());
       Logger.error("[{}] user id: [{}] logged out", getClass(), userId);
       return ok("logged out");
@@ -128,6 +108,25 @@ public class AuthController extends Controller
     Logger.error("[{}] there is not logged in user", getClass());
     return internalServerError("there is not logged in user");
 
+  }
+
+  private Result processLogin(final String email, final String password)
+  {
+
+    final ObjectNode jsonResponse = Json.newObject();
+    final Optional<Token> tokenResult = this.userService.login(email, password);
+
+    if (!tokenResult.isPresent())
+    {
+      Logger.error("[{}] Internal server error, couldn't login: ", getClass());
+      return internalServerError("Internal server error, couldn't login:");
+    }
+
+    final Token token = tokenResult.get();
+
+    jsonResponse.put(AuthenticationAction.AUTH_TOKEN, token.getAuthToken());
+
+    return ok(jsonResponse);
   }
 
 }

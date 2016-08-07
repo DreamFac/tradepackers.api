@@ -18,6 +18,8 @@ public interface UserService extends GenericService<User>
 
   Optional<Token> login(String email, final String password);
 
+  Optional<User> create(User user);
+
   boolean isTokenExpired(Token token);
 
   void logout(Long userId);

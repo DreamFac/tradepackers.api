@@ -8,18 +8,15 @@ import javax.persistence.OneToOne;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import constants.UserLoginStatus;
-
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
 import models.User;
 import models.base.AbstractEntity;
 
 /**
  * Created by eduardo on 1/11/14.
  */
-@Builder
+
 @Entity
 @Getter
 @Setter

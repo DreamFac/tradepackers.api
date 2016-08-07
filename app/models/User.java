@@ -4,27 +4,25 @@ import javax.persistence.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
 import models.base.AbstractEntity;
 import play.data.validation.Constraints;
 
 @Entity
-@Getter
+
 @Setter
-@Builder
+@Getter
 public class User extends AbstractEntity
 {
 
   @Constraints.MinLength(2)
   @Constraints.MaxLength(256)
-  public String firstName;
+  private String firstName;
 
   @Constraints.MinLength(2)
   @Constraints.MaxLength(256)
-  public String lastName;
+  private String lastName;
 
   @Constraints.MaxLength(256)
   @Constraints.Required
@@ -33,4 +31,5 @@ public class User extends AbstractEntity
 
   @JsonIgnore
   private String password;
+
 }
