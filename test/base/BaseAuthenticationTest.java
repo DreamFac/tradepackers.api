@@ -1,3 +1,5 @@
+package base;
+
 import javax.inject.Inject;
 
 import org.junit.After;
@@ -8,6 +10,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 
 import lombok.Getter;
+import models.User;
 import play.Application;
 import play.Environment;
 import play.ApplicationLoader.Context;
@@ -26,8 +29,17 @@ import services.interfaces.UserService;
 /**
  * Created by eduardo on 6/08/16.
  */
-public class BaseTest
+public class BaseAuthenticationTest
 {
+
+  protected static final String USER_EMAIL = "user1@test.com";
+  protected static final String USER_PASSWORD = "PASSWORD1";
+
+  protected static final String USER_EMAIL_SIGNUP = "user2@test.com";
+  protected static final String USER_PASSWORD_SIGNUP = "PASSWORD2";
+  @Inject
+  protected UserService userService;
+
   @Inject
   Application application;
   @Getter
@@ -39,6 +51,15 @@ public class BaseTest
     setupDatabase();
     setupTestModules();
     Helpers.start(this.application);
+    loadUserData();
+  }
+
+  public void loadUserData()
+  {
+    final User user = new User();
+    user.setEmail(USER_EMAIL);
+    user.setPassword(USER_PASSWORD);
+    this.userService.create(user);
   }
 
   @After

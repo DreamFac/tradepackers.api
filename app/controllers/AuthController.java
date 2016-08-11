@@ -1,14 +1,17 @@
 package controllers;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import actions.Authentication;
 import actions.AuthenticationAction;
 import constants.StatusCode;
+import dtos.ErrorDTO;
 import dtos.LoginDTO;
 import models.User;
 import models.security.Token;
@@ -42,8 +45,11 @@ public class AuthController extends Controller
     final Form<LoginDTO> form = this.formFactory.form(LoginDTO.class).bindFromRequest();
     if (form.hasErrors())
     {
-      Logger.error("[{}] Form errors: {}", getClass(), form.errorsAsJson());
-      return badRequest(form.errorsAsJson());
+      final ErrorDTO errorMessage = ErrorDTO.builder().status(BAD_REQUEST)
+          .message(Arrays.asList(form.errorsAsJson())).build();
+      final JsonNode jsonError = Json.toJson(errorMessage);
+      Logger.error("[{}] Form errors: {}", getClass(), jsonError);
+      return badRequest(Json.toJson(errorMessage));
     }
     else
     {
@@ -52,8 +58,14 @@ public class AuthController extends Controller
 
       if (userResult.isPresent())
       {
-        Logger.error("[{}] User id [{}] alrady exist: ", getClass(), userResult.get().getId());
-        return status(StatusCode.USER_EXISTS, "User already exists");
+
+        final String errorMessage =
+            String.format("User with email %s already exists", userResult.get().getEmail());
+        Logger.error("[{}] {} ", getClass(), errorMessage);
+
+        return status(StatusCode.USER_EXISTS,
+            Json.toJson(ErrorDTO.builder().status(StatusCode.USER_EXISTS)
+                .message(Arrays.asList(errorMessage)).build()));
       }
 
       final User user = new User();
@@ -63,9 +75,12 @@ public class AuthController extends Controller
 
       if (!savedUser.isPresent())
       {
-        Logger.error("[{}] Something went wrong when trying to save the user: [{}] after signup",
-            getClass(), loginDTO.getEmail());
-        return internalServerError();
+        final String errorMessage =
+            String.format("Something went wrong when trying to save the user: [%s] after signup",
+                userResult.get().getEmail());
+        Logger.error("[{}] {}", getClass(), errorMessage);
+        return internalServerError(Json.toJson(ErrorDTO.builder().status(INTERNAL_SERVER_ERROR)
+            .message(Arrays.asList(errorMessage)).build()));
       }
       else
       {
@@ -82,8 +97,12 @@ public class AuthController extends Controller
 
     if (loginForm.hasErrors())
     {
-      Logger.error("[{}] Form errors: {}", getClass(), loginForm.errorsAsJson());
-      return badRequest(loginForm.errorsAsJson());
+      final ErrorDTO errorMessage = ErrorDTO.builder().status(BAD_REQUEST)
+          .message(Arrays.asList(loginForm.errorsAsJson()))
+          .build();
+      final JsonNode jsonError = Json.toJson(errorMessage);
+      Logger.error("[{}] Form errors: {}", getClass(), jsonError);
+      return badRequest(jsonError);
     }
 
     final LoginDTO loginDTO = loginForm.get();
@@ -102,7 +121,7 @@ public class AuthController extends Controller
     {
       final long userId = userResulr.get().getId();
       this.userService.logout(userResulr.get().getId());
-      Logger.error("[{}] user id: [{}] logged out", getClass(), userId);
+      Logger.debug("[{}] user id: [{}] logged out", getClass(), userId);
       return ok("logged out");
     }
     Logger.error("[{}] there is not logged in user", getClass());

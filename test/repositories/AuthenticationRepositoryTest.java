@@ -1,42 +1,23 @@
+package repositories;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import com.google.inject.Inject;
-
+import base.BaseAuthenticationTest;
 import constants.UserLoginStatus;
 import models.User;
 import models.security.Token;
 import play.Logger;
-import services.interfaces.UserService;
 
 /**
  * Created by eduardo on 6/08/16.
  */
-public class UserAUthenticationIT extends BaseTest
+public class AuthenticationRepositoryTest extends BaseAuthenticationTest
 {
-
-  private static final String USER_EMAIL = "user1@test.com";
-  private static final String USER_PASSWORD = "PASSWORD1";
-
-  private static final String USER_EMAIL_SIGNUP = "user2@test.com";
-  private static final String USER_PASSWORD_SIGNUP = "PASSWORD2";
-
-  @Inject
-  UserService userService;
-
-  @Before
-  public void loadData()
-  {
-    final User user = new User();
-    user.setEmail(USER_EMAIL);
-    user.setPassword(USER_PASSWORD);
-    this.userService.create(user);
-  }
 
   @Test
   public void testSignUp()

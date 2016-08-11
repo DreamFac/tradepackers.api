@@ -89,7 +89,7 @@ public class UserAuthService extends AbstractService<User> implements UserServic
       Logger.error("[{}] Something went wrong couldn't login", getClass());
       return Optional.empty();
     }
-
+    Logger.debug("[{}] User with email: {} successfully logedIn.", getClass(), email);
     return Optional.ofNullable(token);
   }
 
@@ -140,6 +140,7 @@ public class UserAuthService extends AbstractService<User> implements UserServic
   {
     final String password = Cripto.getMD5(user.getPassword());
     user.setPassword(password);
+    Logger.debug("[{}] Creating user: {}", getClass(), user.getEmail());
     return this.save(user);
   }
 }
