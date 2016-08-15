@@ -1,4 +1,4 @@
-package dtos;
+package dtos.errors;
 
 import java.util.List;
 
@@ -15,5 +15,5 @@ import lombok.Setter;
 public class ErrorDTO
 {
   int status;
-  List<Object> message;
+  List<ErrorMessage> message;
 }

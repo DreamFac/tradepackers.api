@@ -1,6 +1,8 @@
 package controllers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -11,8 +13,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import actions.Authentication;
 import actions.AuthenticationAction;
 import constants.StatusCode;
-import dtos.ErrorDTO;
 import dtos.LoginDTO;
+import dtos.errors.ErrorDTO;
+import dtos.errors.ErrorMessage;
 import models.User;
 import models.security.Token;
 import play.Logger;
@@ -39,17 +42,39 @@ public class AuthController extends Controller
     this.formFactory = formFactory;
   }
 
+  private ErrorDTO buildError(final JsonNode errors, final int code)
+  {
+
+    final List<ErrorMessage> errorList = new ArrayList<>();
+
+    errors.fields()
+        .forEachRemaining((fields) ->
+        {
+          final String cause = fields.getKey();
+          for (final JsonNode jsonNode : fields.getValue())
+          {
+            errorList.add(ErrorMessage.builder()
+                .value(cause.toUpperCase() + ", " + jsonNode.asText().toLowerCase())
+                .build());
+          }
+        });
+    final ErrorDTO errorDTO = ErrorDTO.builder()
+        .status(code)
+        .message(errorList)
+        .build();
+    return errorDTO;
+  }
+
   @Transactional
   public Result signUp()
   {
     final Form<LoginDTO> form = this.formFactory.form(LoginDTO.class).bindFromRequest();
     if (form.hasErrors())
     {
-      final ErrorDTO errorMessage = ErrorDTO.builder().status(BAD_REQUEST)
-          .message(Arrays.asList(form.errorsAsJson())).build();
-      final JsonNode jsonError = Json.toJson(errorMessage);
+      final ErrorDTO errorDTO = buildError(form.errorsAsJson(), BAD_REQUEST);
+      final JsonNode jsonError = Json.toJson(errorDTO);
       Logger.error("[{}] Form errors: {}", getClass(), jsonError);
-      return badRequest(Json.toJson(errorMessage));
+      return badRequest(jsonError);
     }
     else
     {
@@ -65,7 +90,10 @@ public class AuthController extends Controller
 
         return status(StatusCode.USER_EXISTS,
             Json.toJson(ErrorDTO.builder().status(StatusCode.USER_EXISTS)
-                .message(Arrays.asList(errorMessage)).build()));
+                .message(Arrays.asList(ErrorMessage.builder()
+                    .value(errorMessage)
+                    .build()))
+                .build()));
       }
 
       final User user = new User();
@@ -79,8 +107,9 @@ public class AuthController extends Controller
             String.format("Something went wrong when trying to save the user: [%s] after signup",
                 userResult.get().getEmail());
         Logger.error("[{}] {}", getClass(), errorMessage);
-        return internalServerError(Json.toJson(ErrorDTO.builder().status(INTERNAL_SERVER_ERROR)
-            .message(Arrays.asList(errorMessage)).build()));
+        final ErrorDTO errorDTO = buildError(form.errorsAsJson(), INTERNAL_SERVER_ERROR);
+        final JsonNode jsonError = Json.toJson(errorDTO);
+        return internalServerError(jsonError);
       }
       else
       {
@@ -97,10 +126,8 @@ public class AuthController extends Controller
 
     if (loginForm.hasErrors())
     {
-      final ErrorDTO errorMessage = ErrorDTO.builder().status(BAD_REQUEST)
-          .message(Arrays.asList(loginForm.errorsAsJson()))
-          .build();
-      final JsonNode jsonError = Json.toJson(errorMessage);
+      final ErrorDTO errorDTO = buildError(loginForm.errorsAsJson(), BAD_REQUEST);
+      final JsonNode jsonError = Json.toJson(errorDTO);
       Logger.error("[{}] Form errors: {}", getClass(), jsonError);
       return badRequest(jsonError);
     }

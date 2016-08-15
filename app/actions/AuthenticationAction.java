@@ -45,6 +45,7 @@ public class AuthenticationAction extends Action<AuthenticationAction>
 
       final Optional<Token> tokenResult =
           this.tokenRepository.findUserByAuthToken(authTokenHeaderValues[0]);
+
       if (tokenResult.isPresent())
       {
         final Token token = tokenResult.get();
