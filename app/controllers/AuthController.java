@@ -47,8 +47,7 @@ public class AuthController extends Controller
 
     final List<ErrorMessage> errorList = new ArrayList<>();
 
-    errors.fields()
-        .forEachRemaining((fields) ->
+    errors.fields().forEachRemaining((fields) ->
         {
           final String cause = fields.getKey();
           for (final JsonNode jsonNode : fields.getValue())
@@ -58,10 +57,12 @@ public class AuthController extends Controller
                 .build());
           }
         });
+
     final ErrorDTO errorDTO = ErrorDTO.builder()
         .status(code)
         .message(errorList)
         .build();
+
     return errorDTO;
   }
 
