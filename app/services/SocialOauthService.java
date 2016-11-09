@@ -21,7 +21,7 @@ public class SocialOauthService implements OauthService
   {
     this.oAuth = new OAuth();
     this.oAuth.properties.setPort("9000");
-    this.oAuth.setOAuthUrl("http://local.auth.io:6284", "auth");
+    this.oAuth.setOAuthUrl("http://oauth.asuramedia.com:6284", "auth");
     this.oAuth.initialize("Cije2ddbivnUsHXIOJadBQpn6OA", "fvgzrkqoSV12GKEQmO-L8VUywIg");
 
   }
