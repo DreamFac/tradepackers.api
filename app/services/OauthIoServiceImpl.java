@@ -1,6 +1,6 @@
 package services;
 
-import services.interfaces.OauthService;
+import services.interfaces.OauthIoService;
 import steel.dev.oauthio.wrapper.OAuth;
 import steel.dev.oauthio.wrapper.RequestObject;
 import steel.dev.oauthio.wrapper.config.OauthOptions;
@@ -13,16 +13,16 @@ import javax.inject.Singleton;
  * Created by eduardo on 1/11/16.
  */
 @Singleton
-public class SocialOauthService implements OauthService
+public class OauthIoServiceImpl implements OauthIoService
 {
   OAuth oAuth;
 
-  public SocialOauthService()
+  public OauthIoServiceImpl()
   {
     this.oAuth = new OAuth();
     this.oAuth.properties.setPort("9000");
-    this.oAuth.setOAuthUrl("http://oauth.asuramedia.com:6284", "auth");
-    this.oAuth.initialize("Cije2ddbivnUsHXIOJadBQpn6OA", "fvgzrkqoSV12GKEQmO-L8VUywIg");
+    //this.oAuth.setOAuthUrl("http://oauth.asuramedia.com:6284", "auth");
+    this.oAuth.initialize("Roq24cfbowoe2_lARjMFIBur-es", "cwihvNnbGfcEWIH305mpJ4_FDIQ");
 
   }
 

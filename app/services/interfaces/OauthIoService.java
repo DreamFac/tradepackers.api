@@ -9,7 +9,7 @@ import steel.dev.oauthio.wrapper.exceptions.NotInitializedException;
  * Created by eduardo on 1/11/16.
  */
 
-public interface OauthService
+public interface OauthIoService
 {
   String getLoginUrl(String provider);
 

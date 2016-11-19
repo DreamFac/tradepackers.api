@@ -1,13 +1,5 @@
 package services;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.joda.time.DateTime;
-
 import constants.UserLoginStatus;
 import models.User;
 import models.security.Token;
@@ -16,14 +8,22 @@ import play.mvc.Http;
 import repositories.interfaces.TokenRepository;
 import repositories.interfaces.UserRepository;
 import services.base.AbstractService;
-import services.interfaces.UserService;
+import services.interfaces.UserAuthService;
 import utils.Cripto;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.joda.time.DateTime;
 
 /**
  * Created by eduardo on 4/08/16.
  */
 @Singleton
-public class UserAuthService extends AbstractService<User> implements UserService
+public class UserAuthServiceImpl extends AbstractService<User> implements UserAuthService
 {
 
   UserRepository userRepository;
@@ -31,7 +31,8 @@ public class UserAuthService extends AbstractService<User> implements UserServic
   private Optional<User> userResult;
 
   @Inject
-  public UserAuthService(final UserRepository userRepository, final TokenRepository tokenRepository)
+  public UserAuthServiceImpl(final UserRepository userRepository,
+      final TokenRepository tokenRepository)
   {
     super(userRepository);
     this.userRepository = userRepository;
@@ -54,7 +55,6 @@ public class UserAuthService extends AbstractService<User> implements UserServic
   public Optional<Token> login(final String email, final String password)
   {
     final Optional<User> userResult = this.findByEmailAndPassword(email, password);
-
     if (!userResult.isPresent())
     {
       Logger.error("[{}] User with email: {} doesn't exist.", getClass(), email);
@@ -62,6 +62,20 @@ public class UserAuthService extends AbstractService<User> implements UserServic
     }
 
     final User user = userResult.get();
+
+    return processLogin(user);
+
+  }
+
+  @Override
+  public Optional<User> findByEmailAndPassword(final String email, final String password)
+  {
+    return this.userRepository.findByEmailAndPassword(email, Cripto.getMD5(password));
+  }
+
+  private Optional<Token> processLogin(User user)
+  {
+
     final String authToken = UUID.randomUUID().toString();
     final Optional<Token> tokenResult = this.tokenRepository.findTokenByUserId(user.getId());
 
@@ -89,14 +103,23 @@ public class UserAuthService extends AbstractService<User> implements UserServic
       Logger.error("[{}] Something went wrong couldn't login", getClass());
       return Optional.empty();
     }
-    Logger.debug("[{}] User with email: {} successfully logedIn.", getClass(), email);
+    Logger.debug("[{}] User with id: {} successfully logedIn.", getClass(), user.getId());
     return Optional.ofNullable(token);
   }
 
   @Override
-  public Optional<User> findByEmailAndPassword(final String email, final String password)
+  public Optional<Token> login(final Long userId)
   {
-    return this.userRepository.findByEmailAndPassword(email, Cripto.getMD5(password));
+    final Optional<User> userResult = this.findById(userId);
+    if (!userResult.isPresent())
+    {
+      Logger.error("[{}] User with id: {} doesn't exist.", getClass(), userId);
+      return Optional.empty();
+    }
+
+    final User user = userResult.get();
+    return processLogin(user);
+
   }
 
   @Override

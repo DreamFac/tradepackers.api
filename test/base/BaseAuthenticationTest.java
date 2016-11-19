@@ -23,8 +23,8 @@ import repositories.JpaTokenRepository;
 import repositories.JpaUserRepository;
 import repositories.interfaces.TokenRepository;
 import repositories.interfaces.UserRepository;
-import services.UserAuthService;
-import services.interfaces.UserService;
+import services.UserAuthServiceImpl;
+import services.interfaces.UserAuthService;
 
 /**
  * Created by eduardo on 6/08/16.
@@ -38,7 +38,7 @@ public class BaseAuthenticationTest
   protected static final String USER_EMAIL_SIGNUP = "user2@test.com";
   protected static final String USER_PASSWORD_SIGNUP = "PASSWORD2";
   @Inject
-  protected UserService userService;
+  protected UserAuthService userAuthService;
 
   @Inject
   Application application;
@@ -54,20 +54,14 @@ public class BaseAuthenticationTest
     loadUserData();
   }
 
-  public void loadUserData()
+  private void setupDatabase()
   {
-    final User user = new User();
-    user.setEmail(USER_EMAIL);
-    user.setPassword(USER_PASSWORD);
-    this.userService.create(user);
-  }
-
-  @After
-  public void teardown()
-  {
-    getDatabase().shutdown();
-    Helpers.stop(this.application);
-
+    this.database = Databases.inMemory(
+        "testDatabase",
+        ImmutableMap.of(
+            "MODE", "MYSQL"),
+        ImmutableMap.of(
+            "logStatements", true));
   }
 
   private void setupTestModules()
@@ -85,20 +79,26 @@ public class BaseAuthenticationTest
             bind(TokenRepository.class).to(JpaTokenRepository.class).asEagerSingleton();
             bind(Database.class).toInstance(getDatabase());
             // Services
-            bind(UserService.class).to(UserAuthService.class);
+            bind(UserAuthService.class).to(UserAuthAuthServiceImpl.class);
           }
         });
-    Guice.createInjector(builder.applicationModule()).injectMembers(this);
+    Guice.crUserAuthServiceImplplicationModule()).injectMembers(this);
 
   }
 
-  private void setupDatabase()
+  public void loadUserData()
   {
-    this.database = Databases.inMemory(
-        "testDatabase",
-        ImmutableMap.of(
-            "MODE", "MYSQL"),
-        ImmutableMap.of(
-            "logStatements", true));
+    final User user = new User();
+    user.setEmail(USER_EMAIL);
+    user.setPassword(USER_PASSWORD);
+    this.userAuthService.create(user);
+  }
+
+  @After
+  public void teardown()
+  {
+    getDatabase().shutdown();
+    Helpers.stop(this.application);
+
   }
 }
