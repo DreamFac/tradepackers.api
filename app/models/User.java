@@ -1,13 +1,14 @@
 package models;
 
-import javax.persistence.Entity;
+import models.base.AbstractEntity;
+import play.data.validation.Constraints;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.Entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import models.base.AbstractEntity;
-import play.data.validation.Constraints;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 

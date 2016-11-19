@@ -1,14 +1,14 @@
 package services.interfaces;
 
-import java.util.Optional;
-
 import models.User;
 import models.security.Token;
+
+import java.util.Optional;
 
 /**
  * Created by eduardo on 4/08/16.
  */
-public interface UserService extends GenericService<User>
+public interface UserAuthService extends GenericService<User>
 {
   Optional<User> findByEmailAndPassword(String email, String password);
 
@@ -17,6 +17,8 @@ public interface UserService extends GenericService<User>
   Optional<Token> getUserToken(User user);
 
   Optional<Token> login(String email, final String password);
+
+  Optional<Token> login(Long userId);
 
   Optional<User> create(User user);
 

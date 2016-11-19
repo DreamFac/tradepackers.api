@@ -1,11 +1,5 @@
 package actions;
 
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-
-import com.google.inject.Inject;
-
 import constants.StatusCode;
 import models.User;
 import models.security.Token;
@@ -13,7 +7,13 @@ import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;
 import repositories.interfaces.TokenRepository;
-import services.interfaces.UserService;
+import services.interfaces.UserAuthService;
+
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
+import com.google.inject.Inject;
 
 /**
  * Created by eduardo on 4/08/16.
@@ -24,13 +24,14 @@ public class AuthenticationAction extends Action<AuthenticationAction>
   public static final String AUTH_TOKEN = "Token";
 
   private final TokenRepository tokenRepository;
-  private final UserService userService;
+  private final UserAuthService userAuthService;
 
   @Inject
-  public AuthenticationAction(final TokenRepository tokenRepository, final UserService userService)
+  public AuthenticationAction(final TokenRepository tokenRepository,
+      final UserAuthService userAuthService)
   {
     this.tokenRepository = tokenRepository;
-    this.userService = userService;
+    this.userAuthService = userAuthService;
   }
 
   @Override
@@ -50,7 +51,7 @@ public class AuthenticationAction extends Action<AuthenticationAction>
       {
         final Token token = tokenResult.get();
 
-        if (this.userService.isTokenExpired(token))
+        if (this.userAuthService.isTokenExpired(token))
         {
           return CompletableFuture
               .completedFuture(status(StatusCode.TOKEN_EXPIRED, "Token expired"));
