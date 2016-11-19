@@ -86,7 +86,7 @@ public class SocialAuthController extends Controller
     final JsonNode result = Json
         .parse(
             oauth
-                .me("id", "name", "email")
+                .me("id", "name", "firstname", "lastname", "alias", "email")
                 .getBody()
                 .toString()
               );
