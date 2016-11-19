@@ -12,11 +12,11 @@ libraryDependencies ++= Seq(
   javaJpa,
   "org.hibernate" % "hibernate-entitymanager" % "5.1.0.Final",
   "org.projectlombok" % "lombok" % "1.16.10",
-  "com.cheergt.oauth" % "java-oauth-wrapper" % "0.0.0.0.3"
+  "com.github.AsuraMedia" % "java-oauth-wrapper" % "0.0.1-beta1"
 )
 
 resolvers += (
-  "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository"
+  "jitpack" at "https://jitpack.io"
   )
 
 PlayKeys.externalizeResources := false
