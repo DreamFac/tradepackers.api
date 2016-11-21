@@ -11,7 +11,6 @@ import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-
 @Setter
 @Getter
 public class User extends AbstractEntity

@@ -2,7 +2,19 @@ name := """tradepacks"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayJava)
+lazy val root = (project in file(".")).enablePlugins(PlayJava, DebianPlugin, JavaServerAppPackaging)
+
+import com.typesafe.sbt.packager.archetypes.ServerLoader
+
+
+serverLoading in Debian := ServerLoader.SystemV
+
+maintainer in Linux := "Eduardo Aviles <eduardo.avilesj@gmail.com>"
+
+packageSummary in Linux := "Trade packers from asuramedia"
+
+packageDescription := "Tradepackers app"
+
 
 scalaVersion := "2.11.7"
 

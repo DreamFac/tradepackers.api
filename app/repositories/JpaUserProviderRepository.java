@@ -25,7 +25,7 @@ public class JpaUserProviderRepository extends JpaRepository<UserProvider> imple
   @Inject
   public JpaUserProviderRepository(final JPAApi jpaApi)
   {
-    super(jpaApi);
+    super(jpaApi, UserProvider.class);
   }
 
   @Transactional

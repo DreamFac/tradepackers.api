@@ -1,5 +1,11 @@
 package repositories;
 
+import models.security.Token;
+import play.db.jpa.JPAApi;
+import play.db.jpa.Transactional;
+import repositories.base.JpaRepository;
+import repositories.interfaces.TokenRepository;
+
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -8,12 +14,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
-import models.security.Token;
-import play.db.jpa.JPAApi;
-import play.db.jpa.Transactional;
-import repositories.base.JpaRepository;
-import repositories.interfaces.TokenRepository;
 
 /**
  * Created by eduardo on 4/08/16.
@@ -24,7 +24,7 @@ public class JpaTokenRepository extends JpaRepository<Token> implements TokenRep
   @Inject
   public JpaTokenRepository(final JPAApi jpaApi)
   {
-    super(jpaApi);
+    super(jpaApi, Token.class);
   }
 
   @Transactional

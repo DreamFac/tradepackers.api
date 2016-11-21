@@ -22,14 +22,14 @@ public class Module extends AbstractModule
   protected void configure()
   {
     // Repositories
-    bind(UserRepository.class).to(JpaUserRepository.class).asEagerSingleton();
-    bind(TokenRepository.class).to(JpaTokenRepository.class).asEagerSingleton();
-    bind(UserProviderRepository.class).to(JpaUserProviderRepository.class).asEagerSingleton();
+    bind(UserRepository.class).to(JpaUserRepository.class);
+    bind(TokenRepository.class).to(JpaTokenRepository.class);
+    bind(UserProviderRepository.class).to(JpaUserProviderRepository.class);
 
 
     // Services
     bind(UserAuthService.class).to(UserAuthServiceImpl.class);
-    bind(OauthIoService.class).to(OauthIoServiceImpl.class).asEagerSingleton();
-    bind(UserProviderService.class).to(UserProviderServiceImpl.class).asEagerSingleton();
+    bind(OauthIoService.class).to(OauthIoServiceImpl.class);
+    bind(UserProviderService.class).to(UserProviderServiceImpl.class);
   }
 }

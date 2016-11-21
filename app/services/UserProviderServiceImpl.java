@@ -8,10 +8,12 @@ import services.interfaces.UserProviderService;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Created by eduardo on 9/11/16.
  */
+@Singleton
 public class UserProviderServiceImpl extends AbstractService<UserProvider> implements
     UserProviderService
 {

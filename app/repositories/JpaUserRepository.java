@@ -1,5 +1,11 @@
 package repositories;
 
+import models.User;
+import play.db.jpa.JPAApi;
+import play.db.jpa.Transactional;
+import repositories.base.JpaRepository;
+import repositories.interfaces.UserRepository;
+
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -8,12 +14,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
-import models.User;
-import play.db.jpa.JPAApi;
-import play.db.jpa.Transactional;
-import repositories.base.JpaRepository;
-import repositories.interfaces.UserRepository;
 
 /**
  * Created by eduardo on 4/08/16.
@@ -26,7 +26,7 @@ public class JpaUserRepository extends JpaRepository<User> implements UserReposi
   @Inject
   public JpaUserRepository(final JPAApi jpaApi)
   {
-    super(jpaApi);
+    super(jpaApi, User.class);
   }
 
   @Transactional

@@ -2,6 +2,7 @@ package controllers;
 
 import actions.AuthenticationAction;
 import models.User;
+import models.UserProvider;
 import models.security.Token;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -37,7 +38,6 @@ public class SocialAuthController extends Controller
   @Inject
   public SocialAuthController(final OauthIoService oauthService,
       final UserProviderService userProviderService,
-
       final UserAuthService userAuthService)
   {
     this.oauthService = oauthService;
@@ -92,7 +92,7 @@ public class SocialAuthController extends Controller
               );
 
     final JsonNode userInfo = result.get("data");
-/*
+
     final Long userProviderId = userInfo.get("id").asLong();
 
     final JsonNode credentials = Json.parse(oauth.getCredentials().toString());
@@ -105,8 +105,8 @@ public class SocialAuthController extends Controller
       final UserProvider userProvider = userProviderOptional.get();
       userProvider.setCredentials(credentials.textValue());
 
-      final Optional<User> userOptional = this.userAuthService
-          .findById(userProvider.getUser().getId());
+      final Optional<User> userOptional = this.userAuthService.findById(
+          userProvider.getUser().getId());
 
       this.userProviderService.save(userProvider);
 
@@ -135,14 +135,14 @@ public class SocialAuthController extends Controller
           userProvider.setCredentials(credentials.toString());
           if (this.userProviderService.save(userProvider).isPresent())
           {
-            return processLogin(user);
+            return processLogin(createdUser.get());
           }
 
         }
       }
     }
-*/
-    return ok(Json.asciiStringify(userInfo));
+
+    return unauthorized();
 
   }
 

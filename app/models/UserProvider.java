@@ -15,8 +15,6 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-@SuppressWarnings("serial")
-
 public class UserProvider extends AbstractEntity
 {
   private String name;
