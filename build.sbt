@@ -2,7 +2,7 @@ name := """tradepacks"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayJava, DebianPlugin, JavaServerAppPackaging)
+lazy val root = (project in file(".")).enablePlugins(PlayJava, DebianPlugin)
 
 import com.typesafe.sbt.packager.archetypes.ServerLoader
 
