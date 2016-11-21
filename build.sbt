@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayJava, DebianPlugin)
 import com.typesafe.sbt.packager.archetypes.ServerLoader
 
 
-serverLoading in Debian := ServerLoader.Systemd
+serverLoading in Debian := ServerLoader.SystemV
 
 maintainer in Linux := "Eduardo Aviles <eduardo.avilesj@gmail.com>"
 
