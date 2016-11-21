@@ -2,12 +2,9 @@ name := """tradepacks"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayJava, DebianPlugin)
-
-import com.typesafe.sbt.packager.archetypes.ServerLoader
+lazy val root = (project in file(".")).enablePlugins(PlayJava, JavaServerAppPackaging)
 
 
-serverLoading in Debian := ServerLoader.Systemd
 
 packageName := "tradepacks"
 
@@ -20,7 +17,7 @@ packageDescription := "Tradepackers app"
 
 scalaVersion := "2.11.7"
 
-javaOptions in Debian ++= Seq(
+javaOptions in Universal ++= Seq(
   // JVM memory tuning
   "-J-Xmx1024m",
   "-J-Xms512m",
