@@ -1,0 +1,17 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+
+#Security
+POST        /signup                  @controllers.AuthController.signUp()
+POST        /login                   @controllers.AuthController.login()
+GET         /logout                  @controllers.AuthController.logout()
+
+GET         /social/login            @controllers.SocialAuthController.socialLogin()
+GET         /social/:provider        @controllers.SocialAuthController.getLoginUrl(provider : String)
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET         /assets/*file            controllers.Assets.at(path="/public", file)
