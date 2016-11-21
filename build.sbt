@@ -9,6 +9,8 @@ import com.typesafe.sbt.packager.archetypes.ServerLoader
 
 serverLoading in Debian := ServerLoader.Systemd
 
+packageName := "tradepacks"
+
 maintainer in Linux := "Eduardo Aviles <eduardo.avilesj@gmail.com>"
 
 packageSummary in Linux := "Trade packers from asuramedia"
