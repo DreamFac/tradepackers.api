@@ -1,6 +1,12 @@
+import com.typesafe.sbt.packager.archetypes.ServerLoader
+
 name := """tradepacks"""
 
 version := "1.0-SNAPSHOT"
+
+lazy val root = (project in file(".")).enablePlugins(PlayJava, DebianPlugin)
+
+serverLoading in Debian := ServerLoader.Systemd
 
 packageName := "tradepacks"
 
@@ -12,9 +18,6 @@ packageDescription := "Tradepackers app"
 
 
 scalaVersion := "2.11.7"
-
-lazy val root = (project in file(".")).enablePlugins(PlayJava, DebianPlugin)
-
 
 javaOptions in Debian ++= Seq(
   // JVM memory tuning
@@ -33,10 +36,10 @@ javaOptions in Debian ++= Seq(
 
   // Use separate logger configuration file for production environment
   s"-Dlogger.file=/usr/share/${packageName.value}/conf/production-logger.xml"
+
+  // You may also want to include this setting if you use play evolutions
+  //"-DapplyEvolutions.default=true"
 )
-
-
-
 
 libraryDependencies ++= Seq(
   // If you enable PlayEbean plugin you must remove these
