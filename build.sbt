@@ -4,41 +4,41 @@ name := """tradepacks"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayJava, DebianPlugin)
+lazy val root = (project in file(".")).enablePlugins(PlayJava, DebianDeployPlugin)
 
-serverLoading in Debian := ServerLoader.Systemd
+serverLoading in Debian := ServerLoader.SystemV
+
 
 packageName := "tradepacks"
 
-maintainer in Linux := "Eduardo Aviles <eduardo.avilesj@gmail.com>"
+maintainer in Debian := "Eduardo Aviles <eduardo.avilesj@gmail.com>"
 
-packageSummary in Linux := "Trade packers from asuramedia"
+packageSummary in Debian := "Trade packers from asuramedia"
 
 packageDescription := "Tradepackers app"
 
-
 scalaVersion := "2.11.7"
 
-javaOptions in Debian ++= Seq(
+javaOptions in Universal ++= Seq(
   // JVM memory tuning
   "-J-Xmx1024m",
   "-J-Xms512m",
 
   // Since play uses separate pidfile we have to provide it with a proper path
   // name of the pid file must be play.pid
-  s"-Dpidfile.path=/var/run/${packageName.value}/play.pid",
+  //s"-Dpidfile.path=/var/run/${packageName.value}/play.pid",
 
   // alternative, you can remove the PID file
-  // s"-Dpidfile.path=/dev/null",
+  s"-Dpidfile.path=/dev/null",
 
   // Use separate configuration file for production environment
-  s"-Dconfig.file=/usr/share/${packageName.value}/conf/production.conf",
+  //s"-Dconfig.file=/usr/share/${packageName.value}/conf/application.conf",
+
+  s"-Dplay.crypto.secret=b=IjefW?yz`K^^=_ly97<qKgRl7fGl9TU9oJtivvlc:J6V2z2lGBCMvo0>:^09d^"
 
   // Use separate logger configuration file for production environment
-  s"-Dlogger.file=/usr/share/${packageName.value}/conf/production-logger.xml"
+  //s"-Dlogger.file=/usr/share/${packageName.value}/conf/logback.xml"
 
-  // You may also want to include this setting if you use play evolutions
-  //"-DapplyEvolutions.default=true"
 )
 
 libraryDependencies ++= Seq(
