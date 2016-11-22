@@ -45,6 +45,7 @@ libraryDependencies ++= Seq(
   // If you enable PlayEbean plugin you must remove these
   // JPA dependencies to avoid conflicts.
   javaJpa,
+  filters,
   "org.hibernate" % "hibernate-entitymanager" % "5.1.0.Final",
   "org.projectlombok" % "lombok" % "1.16.10",
   "com.github.AsuraMedia" % "java-oauth-wrapper" % "0.0.1-beta1"
