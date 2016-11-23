@@ -1,19 +1,9 @@
 package base;
 
-import javax.inject.Inject;
-
-import org.junit.After;
-import org.junit.Before;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-
-import lombok.Getter;
 import models.User;
 import play.Application;
-import play.Environment;
 import play.ApplicationLoader.Context;
+import play.Environment;
 import play.db.Database;
 import play.db.Databases;
 import play.inject.guice.GuiceApplicationBuilder;
@@ -25,6 +15,17 @@ import repositories.interfaces.TokenRepository;
 import repositories.interfaces.UserRepository;
 import services.UserAuthServiceImpl;
 import services.interfaces.UserAuthService;
+
+import javax.inject.Inject;
+
+import lombok.Getter;
+
+import org.junit.After;
+import org.junit.Before;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
 
 /**
  * Created by eduardo on 6/08/16.
@@ -79,10 +80,10 @@ public class BaseAuthenticationTest
             bind(TokenRepository.class).to(JpaTokenRepository.class).asEagerSingleton();
             bind(Database.class).toInstance(getDatabase());
             // Services
-            bind(UserAuthService.class).to(UserAuthAuthServiceImpl.class);
+            bind(UserAuthService.class).to(UserAuthServiceImpl.class);
           }
         });
-    Guice.crUserAuthServiceImplplicationModule()).injectMembers(this);
+    Guice.createInjector(builder.applicationModule()).injectMembers(this);
 
   }
 
