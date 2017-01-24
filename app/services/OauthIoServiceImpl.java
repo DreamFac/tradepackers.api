@@ -21,6 +21,7 @@ public class OauthIoServiceImpl implements OauthIoService
   {
     this.oAuth = new OAuth();
     this.oAuth.properties.setPort("9000");
+    this.oAuth.properties.setHost("tradepackers.asuramedia.com");
     this.oAuth.setOAuthUrl("http://oauth.asuramedia.com:6284", "auth");
     this.oAuth.initialize("Roq24cfbowoe2_lARjMFIBur-es", "cwihvNnbGfcEWIH305mpJ4_FDIQ");
 
