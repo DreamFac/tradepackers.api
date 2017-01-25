@@ -1,5 +1,6 @@
 package controllers;
 
+import actions.AuthenticationAction;
 import dtos.errors.ErrorDTO;
 import models.User;
 import models.UserProvider;
@@ -63,6 +64,12 @@ public class SocialAuthController extends Controller
     final Map<String, String[]> query = request().queryString();
 
     //parsing request
+    if (query == null || query.get("getToken") == null)
+    {
+      return status(666, "fuck you stupid webview!!!");
+    }
+
+    //parsing request
     if (query == null || query.get("oauthio") == null)
     {
       errors.add("oauthio query string not found");
@@ -87,7 +94,7 @@ public class SocialAuthController extends Controller
     try
     {
       //getting provider
-      final String provider = json.get("provider").toString();
+      final String provider = json.get("provider").textValue();
       //get request data
       final JsonNode data = json.get("data");
       //Setting option code to be verified
@@ -173,9 +180,10 @@ public class SocialAuthController extends Controller
 
     if (tokenOptional.isPresent())
     {
-      final String token = tokenOptional.get().getAuthToken();
-      final String div = "<TextView id=\"token\" text=\"" + token + "\"></TextView>";
-      return ok(div);
+      return ok(Json
+          .newObject()
+          .put(AuthenticationAction.AUTH_TOKEN,
+              tokenOptional.get().getAuthToken()));
     }
     else
     {
