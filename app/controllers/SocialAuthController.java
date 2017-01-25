@@ -1,6 +1,5 @@
 package controllers;
 
-import actions.AuthenticationAction;
 import dtos.errors.ErrorDTO;
 import models.User;
 import models.UserProvider;
@@ -17,13 +16,13 @@ import steel.dev.oauthio.wrapper.exceptions.NotAuthenticatedException;
 import steel.dev.oauthio.wrapper.exceptions.NotInitializedException;
 import utils.ResponseBuilder;
 
+import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -174,10 +173,9 @@ public class SocialAuthController extends Controller
 
     if (tokenOptional.isPresent())
     {
-      return ok(Json
-          .newObject()
-          .put(AuthenticationAction.AUTH_TOKEN,
-              tokenOptional.get().getAuthToken()));
+      final String token = tokenOptional.get().getAuthToken();
+      final String div = "<TextView id=\"token\" text=\"" + token + "\"></TextView>";
+      return ok(div);
     }
     else
     {
