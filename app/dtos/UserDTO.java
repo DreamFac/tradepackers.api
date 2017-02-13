@@ -1,10 +1,9 @@
 package dtos;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import play.data.validation.Constraints;
 
 import lombok.Getter;
 import lombok.Setter;
-import play.data.validation.Constraints;
 
 /**
  * Created by eduardo on 20/11/14.
@@ -32,9 +31,4 @@ public class UserDTO
   @Constraints.MaxLength(256)
   public String lastName;
 
-  @Override
-  public String toString()
-  {
-    return ToStringBuilder.reflectionToString(this);
-  }
 }

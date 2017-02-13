@@ -1,21 +1,22 @@
 package controllers;
 
 import static play.mvc.Http.Status.OK;
+import static play.test.Helpers.BAD_REQUEST;
 import static play.test.Helpers.*;
+
+import base.BaseAuthenticationTest;
+import constants.StatusCode;
+import dtos.TokenDTO;
+import play.Logger;
+import play.libs.Json;
+import play.mvc.Http;
+import play.mvc.Result;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import actions.AuthenticationAction;
-import base.BaseAuthenticationTest;
-import constants.StatusCode;
-import play.Logger;
-import play.libs.Json;
-import play.mvc.Http;
-import play.mvc.Result;
 
 /**
  * Created by eduardo on 10/08/16.
@@ -39,9 +40,11 @@ public class AuthenticationControllerTest extends BaseAuthenticationTest
     requestBuilder.uri(this.SIGNUP);
 
     final Result result = route(requestBuilder);
-    final JsonNode json = Json.parse(contentAsString(result));
+    final TokenDTO tokenDTO = Json.fromJson(Json.parse(contentAsString(result)), TokenDTO.class);
+
     Assert.assertTrue(result.status() == OK);
-    Assert.assertTrue(json.has(AuthenticationAction.AUTH_TOKEN));
+    Assert.assertTrue(tokenDTO != null);
+    Assert.assertTrue(!tokenDTO.getToken().isEmpty());
 
   }
 
@@ -77,9 +80,11 @@ public class AuthenticationControllerTest extends BaseAuthenticationTest
     requestBuilder.uri(this.LOGIN);
 
     final Result result = route(requestBuilder);
-    final JsonNode json = Json.parse(contentAsString(result));
+    final TokenDTO tokenDTO = Json.fromJson(Json.parse(contentAsString(result)), TokenDTO.class);
+
     Assert.assertTrue(result.status() == OK);
-    Assert.assertTrue(json.has(AuthenticationAction.AUTH_TOKEN));
+    Assert.assertTrue(tokenDTO != null);
+    Assert.assertTrue(!tokenDTO.getToken().isEmpty());
 
   }
 

@@ -1,17 +1,16 @@
 package models.security;
 
+import constants.UserLoginStatus;
+import models.User;
+import models.base.AbstractEntity;
+
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import constants.UserLoginStatus;
 import lombok.Getter;
 import lombok.Setter;
-import models.User;
-import models.base.AbstractEntity;
 
 /**
  * Created by eduardo on 1/11/14.
@@ -34,9 +33,4 @@ public class Token extends AbstractEntity
 
   public String ip;
 
-  @Override
-  public String toString()
-  {
-    return ToStringBuilder.reflectionToString(this);
-  }
 }
