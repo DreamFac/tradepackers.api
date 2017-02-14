@@ -17,13 +17,13 @@ import steel.dev.oauthio.wrapper.exceptions.NotAuthenticatedException;
 import steel.dev.oauthio.wrapper.exceptions.NotInitializedException;
 import utils.ResponseBuilder;
 
+import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -182,6 +182,7 @@ public class SocialAuthController extends Controller
       final TokenDTO tokenDTO = TokenDTO.builder()
           .token(tokenOptional.get().getAuthToken())
           .expirationDate(tokenOptional.get().getExpirationDate())
+          .userId(user.getId())
           .build();
 
       return ok(Json.toJson(tokenDTO));

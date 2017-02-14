@@ -1,17 +1,16 @@
 package repositories;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Optional;
-
-import org.junit.Test;
-
 import base.BaseAuthenticationTest;
 import constants.UserLoginStatus;
 import models.User;
 import models.security.Token;
 import play.Logger;
+
+import java.util.Optional;
+
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by eduardo on 6/08/16.

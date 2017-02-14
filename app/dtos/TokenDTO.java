@@ -1,10 +1,10 @@
 package dtos;
 
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.Date;
 
 /**
  * Created by eduardo on 12/02/17.
@@ -15,5 +15,6 @@ import lombok.Getter;
 public class TokenDTO
 {
   private final String token;
+  private final Long userId;
   private final Date expirationDate;
 }

@@ -15,7 +15,7 @@ public class BadgeDTO
 {
   private final Long id;
 
-  private final String region;
+  private final RegionDTO region;
 
   private final String imgUrl;
 }

@@ -1,17 +1,27 @@
 package controllers;
 
+import dtos.TeamDTO;
+import models.Team;
+import play.data.Form;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Result;
 import services.interfaces.TeamService;
 
 import javax.inject.Inject;
 
+import java.util.Optional;
+
+import static play.libs.Json.*;
+import static play.mvc.Results.*;
+
 /**
  * Created by eduardo on 12/02/17.
  */
-public class TeamController extends BaseController
+public class TeamController
 {
   TeamService teamService;
+  FormFactory formFactory;
 
   @Inject
   public TeamController(final TeamService teamService, final FormFactory formFactory)
@@ -20,32 +30,41 @@ public class TeamController extends BaseController
     this.formFactory = formFactory;
   }
 
-  @Override
-  Result get(final Long id)
+  public Result get(final Long userId)
   {
-    return null;
+    final Optional<TeamDTO> teamDTOOptional = teamService.findTeamByUserId(userId);
+    if (teamDTOOptional.isPresent())
+    {
+      return ok(Json.toJson(teamDTOOptional.get()));
+    }
+    else
+    {
+      return badRequest();
+    }
   }
 
-  @Override
-  Result getAll()
+  public Result create(final Long userId)
   {
-    return null;
+    final Form<TeamDTO> form = this.formFactory.form(TeamDTO.class).bindFromRequest();
+    if (form.hasErrors())
+    {
+      return badRequest();
+    }
+    final TeamDTO teamDTO = form.get();
+
+    final Optional<Team> teamOptional = teamService.save(teamService.dtoToEntity(teamDTO, userId));
+
+    if (teamOptional.isPresent())
+    {
+      return ok(toJson(teamService.entityToDto(teamOptional.get())));
+    }
+    else
+    {
+      return badRequest();
+    }
   }
 
-  @Override
-  Result create()
-  {
-    return null;
-  }
-
-  @Override
-  Result createAll()
-  {
-    return null;
-  }
-
-  @Override
-  Result update(final Long id)
+  public Result update(final Long id)
   {
     return null;
   }
