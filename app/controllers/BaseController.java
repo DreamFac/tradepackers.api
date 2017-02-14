@@ -1,6 +1,5 @@
 package controllers;
 
-import play.data.FormFactory;
 import play.mvc.Result;
 
 /**
@@ -8,7 +7,6 @@ import play.mvc.Result;
  */
 public abstract class BaseController
 {
-  public FormFactory formFactory;
 
   abstract Result get(Long id);
 

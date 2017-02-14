@@ -1,8 +1,5 @@
 package controllers;
 
-import static play.mvc.Http.Status.OK;
-import static play.test.Helpers.BAD_REQUEST;
-import static play.test.Helpers.*;
 
 import base.BaseAuthenticationTest;
 import constants.StatusCode;
@@ -17,6 +14,10 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import static play.mvc.Http.Status.OK;
+import static play.test.Helpers.BAD_REQUEST;
+import static play.test.Helpers.*;
 
 /**
  * Created by eduardo on 10/08/16.

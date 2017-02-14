@@ -9,8 +9,10 @@ import play.db.Databases;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.inject.guice.GuiceApplicationLoader;
 import play.test.Helpers;
+import repositories.JpaTeamRepository;
 import repositories.JpaTokenRepository;
 import repositories.JpaUserRepository;
+import repositories.interfaces.TeamRepository;
 import repositories.interfaces.TokenRepository;
 import repositories.interfaces.UserRepository;
 import services.UserAuthServiceImpl;
@@ -78,6 +80,7 @@ public class BaseAuthenticationTest
             // Repositories
             bind(UserRepository.class).to(JpaUserRepository.class).asEagerSingleton();
             bind(TokenRepository.class).to(JpaTokenRepository.class).asEagerSingleton();
+            bind(TeamRepository.class).to(JpaTeamRepository.class).asEagerSingleton();
             bind(Database.class).toInstance(getDatabase());
             // Services
             bind(UserAuthService.class).to(UserAuthServiceImpl.class);
