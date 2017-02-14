@@ -9,13 +9,23 @@ import play.db.Databases;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.inject.guice.GuiceApplicationLoader;
 import play.test.Helpers;
+import repositories.JpaBadgeRepository;
+import repositories.JpaRegionRepository;
 import repositories.JpaTeamRepository;
 import repositories.JpaTokenRepository;
 import repositories.JpaUserRepository;
+import repositories.interfaces.BadgeRepository;
+import repositories.interfaces.RegionRepository;
 import repositories.interfaces.TeamRepository;
 import repositories.interfaces.TokenRepository;
 import repositories.interfaces.UserRepository;
+import services.BadgeServiceImpl;
+import services.RegionServiceImpl;
+import services.TeamServiceImpl;
 import services.UserAuthServiceImpl;
+import services.interfaces.BadgeService;
+import services.interfaces.RegionService;
+import services.interfaces.TeamService;
 import services.interfaces.UserAuthService;
 
 import javax.inject.Inject;
@@ -81,9 +91,14 @@ public class BaseAuthenticationTest
             bind(UserRepository.class).to(JpaUserRepository.class).asEagerSingleton();
             bind(TokenRepository.class).to(JpaTokenRepository.class).asEagerSingleton();
             bind(TeamRepository.class).to(JpaTeamRepository.class).asEagerSingleton();
+            bind(BadgeRepository.class).to(JpaBadgeRepository.class);
+            bind(RegionRepository.class).to(JpaRegionRepository.class);
             bind(Database.class).toInstance(getDatabase());
             // Services
             bind(UserAuthService.class).to(UserAuthServiceImpl.class);
+            bind(TeamService.class).to(TeamServiceImpl.class);
+            bind(BadgeService.class).to(BadgeServiceImpl.class);
+            bind(RegionService.class).to(RegionServiceImpl.class);
           }
         });
     Guice.createInjector(builder.applicationModule()).injectMembers(this);

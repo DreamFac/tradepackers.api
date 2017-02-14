@@ -10,12 +10,12 @@ import java.util.Optional;
  */
 public interface TeamService extends GenericService<Team>
 {
-  Optional<TeamDTO> findTeamByUserId(Long userId);
+  Optional<TeamDTO> findTeamByUserId(String userId);
 
   TeamDTO entityToDto(Team team);
 
   Team dtoToEntity(
       TeamDTO teamDTO,
-      Long userId);
+      String userId);
 
 }

@@ -17,13 +17,13 @@ import steel.dev.oauthio.wrapper.exceptions.NotAuthenticatedException;
 import steel.dev.oauthio.wrapper.exceptions.NotInitializedException;
 import utils.ResponseBuilder;
 
-import javax.inject.Inject;
-
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -125,7 +125,7 @@ public class SocialAuthController extends Controller
         userProvider.setCredentials(credentials.textValue());
 
         final Optional<User> userOptional = this.userAuthService.findById(
-            userProvider.getUser().getId());
+            userProvider.getUser().getId().toString());
 
         this.userProviderService.save(userProvider);
 
@@ -193,7 +193,7 @@ public class SocialAuthController extends Controller
           Json.toJson(
               ResponseBuilder
                   .buildErrorResponse(
-                      Arrays.asList("Cannot login"),
+                      Collections.singletonList("Cannot login"),
                       UNAUTHORIZED)));
     }
   }

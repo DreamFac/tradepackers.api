@@ -48,7 +48,7 @@ public class UserAuthServiceImpl extends AbstractService<User> implements UserAu
   @Override
   public Optional<Token> getUserToken(final User user)
   {
-    return this.tokenRepository.findTokenByUserId(user.getId());
+    return this.tokenRepository.findTokenByUserId(user.getId().toString());
   }
 
   @Override
@@ -73,11 +73,12 @@ public class UserAuthServiceImpl extends AbstractService<User> implements UserAu
     return this.userRepository.findByEmailAndPassword(email, Cripto.getMD5(password));
   }
 
-  private Optional<Token> processLogin(User user)
+  private Optional<Token> processLogin(final User user)
   {
 
     final String authToken = UUID.randomUUID().toString();
-    final Optional<Token> tokenResult = this.tokenRepository.findTokenByUserId(user.getId());
+    final Optional<Token> tokenResult = this.tokenRepository.findTokenByUserId(
+        user.getId().toString());
 
     Token token = null;
 
@@ -108,7 +109,7 @@ public class UserAuthServiceImpl extends AbstractService<User> implements UserAu
   }
 
   @Override
-  public Optional<Token> login(final Long userId)
+  public Optional<Token> login(final String userId)
   {
     final Optional<User> userResult = this.findById(userId);
     if (!userResult.isPresent())
@@ -135,7 +136,7 @@ public class UserAuthServiceImpl extends AbstractService<User> implements UserAu
   }
 
   @Override
-  public void logout(final Long userId)
+  public void logout(final String userId)
   {
     final Optional<Token> tokenResult = this.tokenRepository.findTokenByUserId(userId);
     if (tokenResult.isPresent())

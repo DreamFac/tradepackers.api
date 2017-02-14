@@ -14,9 +14,9 @@ import repositories.interfaces.UserRepository;
 import services.base.AbstractService;
 import services.interfaces.TeamService;
 
-import javax.inject.Inject;
-
 import java.util.Optional;
+
+import javax.inject.Inject;
 
 /**
  * Created by eduardo on 12/02/17.
@@ -43,7 +43,7 @@ public class TeamServiceImpl extends AbstractService<Team> implements TeamServic
   }
 
   @Override
-  public Optional<TeamDTO> findTeamByUserId(final Long userId)
+  public Optional<TeamDTO> findTeamByUserId(final String userId)
   {
     final Optional<Team> team = this.teamRepository.findTeamByUserId(userId);
     if (!team.isPresent())
@@ -62,33 +62,35 @@ public class TeamServiceImpl extends AbstractService<Team> implements TeamServic
 
     return TeamDTO
         .builder()
+        .id(team.getId().toString())
         .abbreviation(team.getAbreviation())
         .badge(badge == null ? BadgeDTO.builder().build() :
-               BadgeDTO
-                   .builder()
-                   .id(badge.getId())
-                   .imgUrl(badge.getImgUrl())
-                   .region(RegionDTO.builder()
-                       .id(team.getBadge().getRegion().getId())
-                       .name(team.getBadge().getRegion().getName())
-                       .build())
-                   .build())
+            BadgeDTO
+                .builder()
+                .id(badge.getId().toString())
+                .imgUrl(badge.getImgUrl())
+                .region(RegionDTO.builder()
+                    .id(team.getBadge().getRegion().getId().toString())
+                    .name(team.getBadge().getRegion().getName())
+                    .build())
+                .build())
         .name(team.getName())
         .build();
   }
 
   public Team dtoToEntity(
       final TeamDTO teamDTO,
-      final Long userId)
+      final String userId)
   {
     final Team team = new Team();
     team.setAbreviation(teamDTO.getAbbreviation());
     Badge badge;
     Region region;
-
-    if (team.getBadge().getId() != null)
+    final Optional<User> userOptional = this.userRepository.get(userId);
+    if (teamDTO.getBadge().getId() != null)
     {
-      final Optional<Badge> badgeOptional = badgeRepository.get(team.getBadge().getId());
+      final Optional<Badge> badgeOptional = this.badgeRepository.get(
+          teamDTO.getBadge().getId().toString());
       badge = badgeOptional.get();
     }
     else
@@ -96,9 +98,9 @@ public class TeamServiceImpl extends AbstractService<Team> implements TeamServic
       badge = new Badge();
       badge.setImgUrl(teamDTO.getBadge().getImgUrl());
 
-      if (team.getBadge().getRegion().getId() != null)
+      if (teamDTO.getBadge().getRegion().getId() != null)
       {
-        final Optional<Region> regionOptional = regionRepository.get(team.getBadge()
+        final Optional<Region> regionOptional = this.regionRepository.get(teamDTO.getBadge()
             .getRegion()
             .getId());
         region = regionOptional.get();
@@ -107,17 +109,15 @@ public class TeamServiceImpl extends AbstractService<Team> implements TeamServic
       {
         region = new Region();
         region.setName(teamDTO.getBadge().getRegion().getName());
-        region = regionRepository.persist(region).get();
+        region = this.regionRepository.persist(region).get();
       }
       badge.setRegion(region);
-      badge = badgeRepository.persist(badge).get();
+      badge = this.badgeRepository.persist(badge).get();
     }
 
     team.setBadge(badge);
-    final User user = new User();
-    user.setId(userId);
-    team.setUser(user);
-
+    team.setName(teamDTO.getName());
+    team.setUser(userOptional.get());
 
     return team;
   }

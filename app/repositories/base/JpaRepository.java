@@ -77,7 +77,7 @@ public class JpaRepository<T extends AbstractEntity> implements Repository<T>
   }
 
   @Override
-  public boolean remove(final Long id)
+  public boolean remove(final Object id)
   {
     return this.jpaApi.withTransaction(entityManager ->
     {
@@ -92,7 +92,7 @@ public class JpaRepository<T extends AbstractEntity> implements Repository<T>
   }
 
   @Override
-  public Optional<T> get(final Long id)
+  public Optional<T> get(final Object id)
   {
     return Optional.ofNullable(this.jpaApi.withTransaction(entityManager ->
     {

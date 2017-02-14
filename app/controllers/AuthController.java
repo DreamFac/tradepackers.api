@@ -148,8 +148,8 @@ public class AuthController extends Controller
     final Optional<User> userResulr = this.userAuthService.getLoggedInUser();
     if (userResulr.isPresent())
     {
-      final long userId = userResulr.get().getId();
-      this.userAuthService.logout(userResulr.get().getId());
+      final String userId = userResulr.get().getId();
+      this.userAuthService.logout(userResulr.get().getId().toString());
       Logger.debug("[{}] user id: [{}] logged out", getClass(), userId);
       return ok("logged out");
     }
