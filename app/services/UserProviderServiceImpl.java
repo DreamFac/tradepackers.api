@@ -14,7 +14,7 @@ import javax.inject.Singleton;
  * Created by eduardo on 9/11/16.
  */
 @Singleton
-public class UserProviderServiceImpl extends AbstractService<UserProvider> implements
+public class UserProviderServiceImpl extends AbstractService<UserProvider, Object> implements
     UserProviderService
 {
 
@@ -31,5 +31,17 @@ public class UserProviderServiceImpl extends AbstractService<UserProvider> imple
   public Optional<UserProvider> findByProviderId(final Long providerId)
   {
     return this.userProviderRepository.getByProviderId(providerId);
+  }
+
+  @Override
+  public Object entityToDto(final UserProvider entity)
+  {
+    return null;
+  }
+
+  @Override
+  public UserProvider dtoToEntity(final Object dto)
+  {
+    return null;
   }
 }

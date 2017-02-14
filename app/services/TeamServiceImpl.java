@@ -15,7 +15,7 @@ import javax.inject.Inject;
 /**
  * Created by eduardo on 12/02/17.
  */
-public class TeamServiceImpl extends AbstractService<Team> implements TeamService
+public class TeamServiceImpl extends AbstractService<Team, TeamDTO> implements TeamService
 {
   TeamRepository teamRepository;
 
@@ -38,6 +38,7 @@ public class TeamServiceImpl extends AbstractService<Team> implements TeamServic
     return Optional.ofNullable(entityToDto(team.get()));
   }
 
+  @Override
   public TeamDTO entityToDto(final Team team)
   {
     final Badge badge = team.getBadge();
@@ -58,10 +59,12 @@ public class TeamServiceImpl extends AbstractService<Team> implements TeamServic
         .build();
   }
 
+  @Override
   public Team dtoToEntity(final TeamDTO teamDTO)
   {
     final Team team = new Team();
 
     return team;
   }
+
 }
