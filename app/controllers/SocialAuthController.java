@@ -18,7 +18,7 @@ import steel.dev.oauthio.wrapper.exceptions.NotInitializedException;
 import utils.ResponseBuilder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -125,7 +125,7 @@ public class SocialAuthController extends Controller
         userProvider.setCredentials(credentials.textValue());
 
         final Optional<User> userOptional = this.userAuthService.findById(
-            userProvider.getUser().getId());
+            userProvider.getUser().getId().toString());
 
         this.userProviderService.save(userProvider);
 
@@ -182,6 +182,7 @@ public class SocialAuthController extends Controller
       final TokenDTO tokenDTO = TokenDTO.builder()
           .token(tokenOptional.get().getAuthToken())
           .expirationDate(tokenOptional.get().getExpirationDate())
+          .userId(user.getId())
           .build();
 
       return ok(Json.toJson(tokenDTO));
@@ -192,7 +193,7 @@ public class SocialAuthController extends Controller
           Json.toJson(
               ResponseBuilder
                   .buildErrorResponse(
-                      Arrays.asList("Cannot login"),
+                      Collections.singletonList("Cannot login"),
                       UNAUTHORIZED)));
     }
   }

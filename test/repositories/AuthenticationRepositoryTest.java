@@ -1,17 +1,16 @@
 package repositories;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Optional;
-
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 import base.BaseAuthenticationTest;
 import constants.UserLoginStatus;
 import models.User;
 import models.security.Token;
 import play.Logger;
+
+import java.util.Optional;
+
+import org.junit.Test;
 
 /**
  * Created by eduardo on 6/08/16.
@@ -63,7 +62,7 @@ public class AuthenticationRepositoryTest extends BaseAuthenticationTest
     Logger.debug("[{}] User with email: [{}] successfully Logged in", getClass(), USER_EMAIL);
     final Token token = tokenResultLogin.get();
     final User userLoggedIn = token.getUser();
-    this.userAuthService.logout(userLoggedIn.getId());
+    this.userAuthService.logout(userLoggedIn.getId().toString());
     final Optional<Token> tokenOut = this.userAuthService.getUserToken(userLoggedIn);
     assertTrue(tokenOut.isPresent());
     assertEquals(tokenOut.get().getStatus(), UserLoginStatus.OUT);

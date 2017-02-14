@@ -1,8 +1,12 @@
 package models.base;
 
 import java.util.Date;
+import java.util.UUID;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -13,29 +17,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class AbstractEntity
 {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  public Long id;
-
+  public String id;
   @JsonIgnore
   @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
   public Date creationDate;
   @JsonIgnore
   @Version
   public Date lastModifiedDate;
-
-  /**
-   * Returns the identifier of the entity.
-   *
-   * @return the id
-   */
-  public Long getId()
-  {
-    return this.id;
-  }
-
-  public void setId(Long id)
-  {
-    this.id = id;
+  public AbstractEntity() {
+    this.id = UUID.randomUUID().toString();
   }
 
   public Date getCreationDate()
@@ -43,7 +33,7 @@ public class AbstractEntity
     return this.creationDate;
   }
 
-  public void setCreationDate(Date creationDate)
+  public void setCreationDate(final Date creationDate)
   {
     this.creationDate = creationDate;
   }
@@ -53,13 +43,13 @@ public class AbstractEntity
     return this.lastModifiedDate;
   }
 
-  public void setLastModifiedDate(Date lastModifiedDate)
+  public void setLastModifiedDate(final Date lastModifiedDate)
   {
     this.lastModifiedDate = lastModifiedDate;
   }
 
   @Override
-  public boolean equals(Object obj)
+  public boolean equals(final Object obj)
   {
     if (this == obj)
     {
@@ -71,15 +61,30 @@ public class AbstractEntity
       return false;
     }
 
-    AbstractEntity that = (AbstractEntity) obj;
+    final AbstractEntity that = (AbstractEntity) obj;
 
     return this.id.equals(that.getId());
+  }
+
+  /**
+   * Returns the identifier of the entity.
+   *
+   * @return the id
+   */
+  public String getId()
+  {
+    return this.id;
+  }
+
+  public void setId(final String id)
+  {
+    this.id = id;
   }
 
   @Override
   public int hashCode()
   {
-    return id == null ? 0 : id.hashCode();
+    return this.id == null ? 0 : this.id.hashCode();
   }
 
   /*

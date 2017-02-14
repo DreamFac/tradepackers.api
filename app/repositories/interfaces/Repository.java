@@ -1,17 +1,17 @@
 package repositories.interfaces;
 
+import models.base.AbstractEntity;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
-import models.base.AbstractEntity;
 
 /**
  * Created by eduardo on 4/08/16.
  */
 public interface Repository<T extends AbstractEntity>
 {
-  Optional<T> get(Long id);
+  Optional<T> get(Object id);
 
   List<T> get();
 
@@ -25,7 +25,8 @@ public interface Repository<T extends AbstractEntity>
 
   /**
    * remove the entity with the given id.
+   * @param id
    */
-  boolean remove(Long id);
+  boolean remove(Object id);
 
 }
