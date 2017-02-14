@@ -1,5 +1,8 @@
 package controllers;
 
+import static play.libs.Json.*;
+import static play.mvc.Results.*;
+
 import dtos.TeamDTO;
 import models.Team;
 import play.data.Form;
@@ -8,12 +11,9 @@ import play.libs.Json;
 import play.mvc.Result;
 import services.interfaces.TeamService;
 
-import javax.inject.Inject;
-
 import java.util.Optional;
 
-import static play.libs.Json.*;
-import static play.mvc.Results.*;
+import javax.inject.Inject;
 
 /**
  * Created by eduardo on 12/02/17.
@@ -30,9 +30,9 @@ public class TeamController
     this.formFactory = formFactory;
   }
 
-  public Result get(final Long userId)
+  public Result get(final String userId)
   {
-    final Optional<TeamDTO> teamDTOOptional = teamService.findTeamByUserId(userId);
+    final Optional<TeamDTO> teamDTOOptional = this.teamService.findTeamByUserId(userId);
     if (teamDTOOptional.isPresent())
     {
       return ok(Json.toJson(teamDTOOptional.get()));
@@ -43,20 +43,21 @@ public class TeamController
     }
   }
 
-  public Result create(final Long userId)
+  public Result create(final String userId)
   {
     final Form<TeamDTO> form = this.formFactory.form(TeamDTO.class).bindFromRequest();
     if (form.hasErrors())
     {
-      return badRequest();
+      return badRequest(form.errorsAsJson());
     }
     final TeamDTO teamDTO = form.get();
 
-    final Optional<Team> teamOptional = teamService.save(teamService.dtoToEntity(teamDTO, userId));
+    final Optional<Team> teamOptional = this.teamService.save(
+        this.teamService.dtoToEntity(teamDTO, userId));
 
     if (teamOptional.isPresent())
     {
-      return ok(toJson(teamService.entityToDto(teamOptional.get())));
+      return ok(toJson(this.teamService.entityToDto(teamOptional.get())));
     }
     else
     {

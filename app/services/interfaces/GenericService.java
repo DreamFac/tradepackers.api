@@ -41,7 +41,7 @@ public interface GenericService<T>
    *
    */
 
-  Optional<T> update(Long id, Object updated);
+  Optional<T> update(Object id, Object updated);
 
   /**
    * Deletes a person.
@@ -54,7 +54,7 @@ public interface GenericService<T>
    *
    */
 
-  boolean delete(Long id);
+  boolean delete(Object id);
 
   /**
    * Finds all persons.
@@ -73,7 +73,7 @@ public interface GenericService<T>
    * @return The found person. If no person is found, this method returns null.
    */
 
-  Optional<T> findById(Long id);
+  Optional<T> findById(Object id);
 
   void copyProperties(Object src, Object target);
 

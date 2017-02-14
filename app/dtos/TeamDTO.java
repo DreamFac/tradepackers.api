@@ -3,19 +3,27 @@ package dtos;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Created by eduardo on 12/02/17.
  */
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@Setter
+@ToString
 public class TeamDTO
 {
-  private final String name;
+  private String id;
 
-  private final String abbreviation;
+  private String name;
 
-  private final BadgeDTO badge;
+  private String abbreviation;
+
+  private BadgeDTO badge;
 
 }

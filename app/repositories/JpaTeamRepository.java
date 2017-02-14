@@ -29,7 +29,7 @@ public class JpaTeamRepository extends JpaRepository<Team> implements TeamReposi
 
   @Transactional
   @Override
-  public Optional<Team> findTeamByUserId(final Long userId)
+  public Optional<Team> findTeamByUserId(final String userId)
   {
     return getJpaApi().withTransaction(entityManager ->
     {

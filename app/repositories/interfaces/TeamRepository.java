@@ -9,5 +9,5 @@ import java.util.Optional;
  */
 public interface TeamRepository extends Repository<Team>
 {
-  Optional<Team> findTeamByUserId(Long userId);
+  Optional<Team> findTeamByUserId(String userId);
 }

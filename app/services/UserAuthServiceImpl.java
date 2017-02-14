@@ -49,7 +49,7 @@ public class UserAuthServiceImpl extends AbstractService<User, UserDTO> implemen
   @Override
   public Optional<Token> getUserToken(final User user)
   {
-    return this.tokenRepository.findTokenByUserId(user.getId());
+    return this.tokenRepository.findTokenByUserId(user.getId().toString());
   }
 
   @Override
@@ -78,7 +78,8 @@ public class UserAuthServiceImpl extends AbstractService<User, UserDTO> implemen
   {
 
     final String authToken = UUID.randomUUID().toString();
-    final Optional<Token> tokenResult = this.tokenRepository.findTokenByUserId(user.getId());
+    final Optional<Token> tokenResult = this.tokenRepository.findTokenByUserId(
+        user.getId().toString());
 
     Token token = null;
 
@@ -109,7 +110,7 @@ public class UserAuthServiceImpl extends AbstractService<User, UserDTO> implemen
   }
 
   @Override
-  public Optional<Token> login(final Long userId)
+  public Optional<Token> login(final String userId)
   {
     final Optional<User> userResult = this.findById(userId);
     if (!userResult.isPresent())
@@ -136,7 +137,7 @@ public class UserAuthServiceImpl extends AbstractService<User, UserDTO> implemen
   }
 
   @Override
-  public void logout(final Long userId)
+  public void logout(final String userId)
   {
     final Optional<Token> tokenResult = this.tokenRepository.findTokenByUserId(userId);
     if (tokenResult.isPresent())

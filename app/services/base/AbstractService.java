@@ -69,7 +69,7 @@ public abstract class AbstractService<T extends AbstractEntity, D> implements Ge
    */
 
   @Override
-  public Optional<T> update(final Long id, final Object updated)
+  public Optional<T> update(final Object id, final Object updated)
   {
     final Optional<T> u = this.repo.get(id);
 
@@ -123,7 +123,7 @@ public abstract class AbstractService<T extends AbstractEntity, D> implements Ge
    *
    */
   @Override
-  public boolean delete(final Long id)
+  public boolean delete(final Object id)
   {
     return this.repo.remove(id);
   }
@@ -149,7 +149,7 @@ public abstract class AbstractService<T extends AbstractEntity, D> implements Ge
    * @return The found person. If no person is found, this method returns null.
    */
   @Override
-  public Optional<T> findById(final Long id)
+  public Optional<T> findById(final Object id)
   {
 
     final Optional<T> result = this.repo.get(id);
@@ -160,8 +160,5 @@ public abstract class AbstractService<T extends AbstractEntity, D> implements Ge
     }
     return Optional.empty();
   }
-
-  public abstract  D entityToDto(T entity);
-  public abstract  T dtoToEntity(D dto);
 
 }
