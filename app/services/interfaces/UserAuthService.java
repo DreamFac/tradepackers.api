@@ -18,13 +18,13 @@ public interface UserAuthService extends GenericService<User>
 
   Optional<Token> login(String email, final String password);
 
-  Optional<Token> login(Long userId);
+  Optional<Token> login(String userId);
 
   Optional<User> create(User user);
 
   boolean isTokenExpired(Token token);
 
-  void logout(Long userId);
+  void logout(String userId);
 
   Optional<User> getLoggedInUser();
 }

@@ -1,6 +1,6 @@
 package controllers;
 
-import actions.AuthenticationAction;
+import dtos.TokenDTO;
 import dtos.errors.ErrorDTO;
 import models.User;
 import models.UserProvider;
@@ -17,13 +17,13 @@ import steel.dev.oauthio.wrapper.exceptions.NotAuthenticatedException;
 import steel.dev.oauthio.wrapper.exceptions.NotInitializedException;
 import utils.ResponseBuilder;
 
-import javax.inject.Inject;
-
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -125,7 +125,7 @@ public class SocialAuthController extends Controller
         userProvider.setCredentials(credentials.textValue());
 
         final Optional<User> userOptional = this.userAuthService.findById(
-            userProvider.getUser().getId());
+            userProvider.getUser().getId().toString());
 
         this.userProviderService.save(userProvider);
 
@@ -171,7 +171,6 @@ public class SocialAuthController extends Controller
       return status(BAD_REQUEST, Json.toJson(errorResponse));
     }
 
-
   }
 
   private Result processLogin(final User user)
@@ -180,10 +179,13 @@ public class SocialAuthController extends Controller
 
     if (tokenOptional.isPresent())
     {
-      return ok(Json
-          .newObject()
-          .put(AuthenticationAction.AUTH_TOKEN,
-              tokenOptional.get().getAuthToken()));
+      final TokenDTO tokenDTO = TokenDTO.builder()
+          .token(tokenOptional.get().getAuthToken())
+          .expirationDate(tokenOptional.get().getExpirationDate())
+          .userId(user.getId())
+          .build();
+
+      return ok(Json.toJson(tokenDTO));
     }
     else
     {
@@ -191,7 +193,7 @@ public class SocialAuthController extends Controller
           Json.toJson(
               ResponseBuilder
                   .buildErrorResponse(
-                      Arrays.asList("Cannot login"),
+                      Collections.singletonList("Cannot login"),
                       UNAUTHORIZED)));
     }
   }

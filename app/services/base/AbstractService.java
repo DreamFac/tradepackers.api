@@ -1,17 +1,22 @@
 package services.base;
 
-import java.util.*;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-
-import lombok.AllArgsConstructor;
 import models.base.AbstractEntity;
 import play.Logger;
 import repositories.interfaces.Repository;
 import services.interfaces.GenericService;
 import utils.HbUtils;
+
+import lombok.AllArgsConstructor;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 
 /**
  * Created by eduardo on 12/03/15.
@@ -64,7 +69,7 @@ public abstract class AbstractService<T extends AbstractEntity> implements Gener
    */
 
   @Override
-  public Optional<T> update(final Long id, final Object updated)
+  public Optional<T> update(final Object id, final Object updated)
   {
     final Optional<T> u = this.repo.get(id);
 
@@ -81,6 +86,32 @@ public abstract class AbstractService<T extends AbstractEntity> implements Gener
     }
   }
 
+  // then use Spring BeanUtils to copy and ignore null
+  @Override
+  public void copyProperties(final Object src, final Object target)
+  {
+    BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
+  }
+
+  @Override
+  public String[] getNullPropertyNames(final Object source)
+  {
+    final BeanWrapper src = new BeanWrapperImpl(source);
+    final java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+    final Set<String> emptyNames = new HashSet<>();
+    for (final java.beans.PropertyDescriptor pd : pds)
+    {
+      final Object srcValue = src.getPropertyValue(pd.getName());
+      if (srcValue == null)
+      {
+        emptyNames.add(pd.getName());
+      }
+    }
+    final String[] result = new String[emptyNames.size()];
+    return emptyNames.toArray(result);
+  }
+
   /**
    * Deletes a person.
    *
@@ -92,7 +123,7 @@ public abstract class AbstractService<T extends AbstractEntity> implements Gener
    *
    */
   @Override
-  public boolean delete(final Long id)
+  public boolean delete(final Object id)
   {
     return this.repo.remove(id);
   }
@@ -118,7 +149,7 @@ public abstract class AbstractService<T extends AbstractEntity> implements Gener
    * @return The found person. If no person is found, this method returns null.
    */
   @Override
-  public Optional<T> findById(final Long id)
+  public Optional<T> findById(final Object id)
   {
 
     final Optional<T> result = this.repo.get(id);
@@ -128,32 +159,6 @@ public abstract class AbstractService<T extends AbstractEntity> implements Gener
       return Optional.of(HbUtils.deproxy(object));
     }
     return Optional.empty();
-  }
-
-  @Override
-  public String[] getNullPropertyNames(final Object source)
-  {
-    final BeanWrapper src = new BeanWrapperImpl(source);
-    final java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
-
-    final Set<String> emptyNames = new HashSet<>();
-    for (final java.beans.PropertyDescriptor pd : pds)
-    {
-      final Object srcValue = src.getPropertyValue(pd.getName());
-      if (srcValue == null)
-      {
-        emptyNames.add(pd.getName());
-      }
-    }
-    final String[] result = new String[emptyNames.size()];
-    return emptyNames.toArray(result);
-  }
-
-  // then use Spring BeanUtils to copy and ignore null
-  @Override
-  public void copyProperties(final Object src, final Object target)
-  {
-    BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
   }
 
 }

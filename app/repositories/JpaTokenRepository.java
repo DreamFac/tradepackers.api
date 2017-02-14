@@ -46,7 +46,7 @@ public class JpaTokenRepository extends JpaRepository<Token> implements TokenRep
 
   @Transactional
   @Override
-  public Optional<Token> findTokenByUserId(final Long userId)
+  public Optional<Token> findTokenByUserId(final String userId)
   {
     return getJpaApi().withTransaction((entityManager ->
     {

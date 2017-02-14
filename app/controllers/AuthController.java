@@ -1,9 +1,9 @@
 package controllers;
 
 import actions.Authentication;
-import actions.AuthenticationAction;
 import constants.StatusCode;
 import dtos.LoginDTO;
+import dtos.TokenDTO;
 import dtos.errors.ErrorDTO;
 import dtos.errors.ErrorMessage;
 import models.User;
@@ -24,7 +24,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Created by eduardo on 4/08/16.
@@ -99,7 +98,6 @@ public class AuthController extends Controller
   private Result processLogin(final String email, final String password)
   {
 
-    final ObjectNode jsonResponse = Json.newObject();
     final Optional<Token> tokenResult = this.userAuthService.login(email, password);
 
     if (!tokenResult.isPresent())
@@ -113,10 +111,12 @@ public class AuthController extends Controller
     }
 
     final Token token = tokenResult.get();
-
-    jsonResponse.put(AuthenticationAction.AUTH_TOKEN, token.getAuthToken());
-
-    return ok(jsonResponse);
+    final TokenDTO tokenDTO = TokenDTO.builder()
+        .token(token.getAuthToken())
+        .expirationDate(token.getExpirationDate())
+        .build();
+    
+    return ok(Json.toJson(tokenDTO));
   }
 
   @Transactional
@@ -148,8 +148,8 @@ public class AuthController extends Controller
     final Optional<User> userResulr = this.userAuthService.getLoggedInUser();
     if (userResulr.isPresent())
     {
-      final long userId = userResulr.get().getId();
-      this.userAuthService.logout(userResulr.get().getId());
+      final String userId = userResulr.get().getId();
+      this.userAuthService.logout(userResulr.get().getId().toString());
       Logger.debug("[{}] user id: [{}] logged out", getClass(), userId);
       return ok("logged out");
     }
