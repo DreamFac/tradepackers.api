@@ -3,6 +3,7 @@ package controllers;
 import static play.libs.Json.*;
 import static play.mvc.Results.*;
 
+import actions.Authentication;
 import dtos.RegionDTO;
 import models.Region;
 import play.data.Form;
@@ -31,6 +32,7 @@ public class RegionController
     this.formFactory = formFactory;
   }
 
+  @Authentication
   public Result get()
   {
     final List<RegionDTO> regionDTOs = this.regionService
@@ -40,6 +42,7 @@ public class RegionController
     return ok(toJson(regionDTOs));
   }
 
+  @Authentication
   public Result create()
   {
     final Form<RegionDTO> form = this.formFactory.form(RegionDTO.class).bindFromRequest();

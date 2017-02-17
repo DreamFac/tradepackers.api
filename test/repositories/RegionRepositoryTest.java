@@ -2,7 +2,7 @@ package repositories;
 
 import static org.junit.Assert.*;
 
-import base.BaseAuthenticationTest;
+import base.BaseRepositoryTest;
 import models.Region;
 import repositories.interfaces.RegionRepository;
 
@@ -16,7 +16,7 @@ import org.junit.Test;
  * Created by eduardo on 6/08/16.
  */
 
-public class RegionRepositoryTest extends BaseAuthenticationTest
+public class RegionRepositoryTest extends BaseRepositoryTest
 {
 
   @Inject

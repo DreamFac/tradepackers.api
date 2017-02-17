@@ -1,6 +1,8 @@
 package repositories;
 
-import base.BaseAuthenticationTest;
+import static org.junit.Assert.*;
+
+import base.BaseRepositoryTest;
 import models.Badge;
 import models.Region;
 import models.Team;
@@ -11,19 +13,17 @@ import repositories.interfaces.RegionRepository;
 import repositories.interfaces.TeamRepository;
 import repositories.interfaces.UserRepository;
 
-import javax.inject.Inject;
-
 import java.util.Optional;
 
-import org.junit.Test;
+import javax.inject.Inject;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * Created by eduardo on 6/08/16.
  */
 
-public class TeamRepositoryTest extends BaseAuthenticationTest
+public class TeamRepositoryTest extends BaseRepositoryTest
 {
 
   @Inject
@@ -39,7 +39,7 @@ public class TeamRepositoryTest extends BaseAuthenticationTest
   public void testCreateTeam()
   {
     Logger.debug("[{}] Inside Create Team test", getClass());
-    final User user = userRepository.get().stream().findFirst().get();
+    final User user = this.userRepository.get().stream().findFirst().get();
 
     final Team team = new Team();
     team.setAbreviation("GT");
@@ -49,16 +49,16 @@ public class TeamRepositoryTest extends BaseAuthenticationTest
 
     final Region region = new Region();
     region.setName("Occidente");
-    final Optional<Region> regionOptional = regionRepository.persist(region);
+    final Optional<Region> regionOptional = this.regionRepository.persist(region);
     badge.setRegion(regionOptional.get());
 
-    final Optional<Badge> badgeOptional = badgeRepository.persist(badge);
+    final Optional<Badge> badgeOptional = this.badgeRepository.persist(badge);
 
     team.setBadge(badgeOptional.get());
 
     team.setUser(user);
 
-    final Optional<Team> teamOptional = teamRepository.persist(team);
+    final Optional<Team> teamOptional = this.teamRepository.persist(team);
 
     assertTrue(teamOptional.isPresent());
 
