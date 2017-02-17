@@ -1,6 +1,5 @@
 package base;
 
-import models.User;
 import play.Application;
 import play.ApplicationLoader.Context;
 import play.Environment;
@@ -40,19 +39,10 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 
 /**
- * Created by eduardo on 6/08/16.
+ * Created by eduardo on 16/02/17.
  */
-public class BaseAuthenticationTest
+public class BaseTest
 {
-
-  protected static final String USER_EMAIL = "user1@test.com";
-  protected static final String USER_PASSWORD = "PASSWORD1";
-
-  protected static final String USER_EMAIL_SIGNUP = "user2@test.com";
-  protected static final String USER_PASSWORD_SIGNUP = "PASSWORD2";
-  @Inject
-  protected UserAuthService userAuthService;
-
   @Inject
   Application application;
   @Getter
@@ -64,7 +54,6 @@ public class BaseAuthenticationTest
     setupDatabase();
     setupTestModules();
     Helpers.start(this.application);
-    loadUserData();
   }
 
   private void setupDatabase()
@@ -105,19 +94,10 @@ public class BaseAuthenticationTest
 
   }
 
-  public void loadUserData()
-  {
-    final User user = new User();
-    user.setEmail(USER_EMAIL);
-    user.setPassword(USER_PASSWORD);
-    this.userAuthService.create(user);
-  }
-
   @After
   public void teardown()
   {
     getDatabase().shutdown();
     Helpers.stop(this.application);
-
   }
 }

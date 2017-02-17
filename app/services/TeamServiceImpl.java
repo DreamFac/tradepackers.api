@@ -1,5 +1,8 @@
 package services;
 
+import static play.mvc.Http.Status.*;
+import static play.mvc.Results.*;
+
 import dtos.BadgeDTO;
 import dtos.RegionDTO;
 import dtos.TeamDTO;
@@ -7,13 +10,16 @@ import models.Badge;
 import models.Region;
 import models.Team;
 import models.User;
+import play.libs.Json;
 import repositories.interfaces.BadgeRepository;
 import repositories.interfaces.RegionRepository;
 import repositories.interfaces.TeamRepository;
 import repositories.interfaces.UserRepository;
 import services.base.AbstractService;
 import services.interfaces.TeamService;
+import utils.ResponseBuilder;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -88,6 +94,13 @@ public class TeamServiceImpl extends AbstractService<Team> implements TeamServic
     Badge badge;
     Region region;
     final Optional<User> userOptional = this.userRepository.get(userId);
+
+    if (!userOptional.isPresent())
+    {
+      status(NOT_FOUND, Json.toJson(ResponseBuilder
+          .buildErrorResponse(Collections.singletonList("User not found"), NOT_FOUND)));
+    }
+
     if (teamDTO.getBadge().getId() != null)
     {
       final Optional<Badge> badgeOptional = this.badgeRepository.get(

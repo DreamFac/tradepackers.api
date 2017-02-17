@@ -1,9 +1,10 @@
 package controllers;
 
+import static actions.AuthenticationAction.*;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.*;
 
-import base.BaseAuthenticationTest;
+import base.BaseControllerTest;
 import dtos.BadgeDTO;
 import dtos.RegionDTO;
 import dtos.TeamDTO;
@@ -22,7 +23,7 @@ import org.junit.Test;
 /**
  * Created by eduardo on 10/08/16.
  */
-public class TeamControllerTest extends BaseAuthenticationTest
+public class TeamControllerTest extends BaseControllerTest
 {
 
   @Inject
@@ -52,6 +53,7 @@ public class TeamControllerTest extends BaseAuthenticationTest
     final Http.RequestBuilder requestBuilder = new Http.RequestBuilder();
     requestBuilder.bodyJson(Json.toJson(teamDTO));
     requestBuilder.method(POST);
+    requestBuilder.header(AUTH_TOKEN_HEADER, this.tokenDTO.getToken());
     requestBuilder.uri(routes.TeamController.create(user.getId()).url());
 
     final Result result = route(requestBuilder);

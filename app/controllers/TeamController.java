@@ -4,6 +4,7 @@ import static play.libs.Json.*;
 import static play.mvc.Http.Status.*;
 import static play.mvc.Results.*;
 
+import actions.Authentication;
 import dtos.TeamDTO;
 import models.Team;
 import play.data.Form;
@@ -33,7 +34,7 @@ public class TeamController
     this.formFactory = formFactory;
   }
 
-
+  @Authentication
   public Result get(final String userId)
   {
     final Optional<TeamDTO> teamDTOOptional = this.teamService.findTeamByUserId(userId);
@@ -48,7 +49,7 @@ public class TeamController
     }
   }
 
-
+  @Authentication
   public Result create(final String userId)
   {
     final Form<TeamDTO> form = this.formFactory.form(TeamDTO.class).bindFromRequest();
@@ -58,6 +59,7 @@ public class TeamController
     }
 
     final Optional<TeamDTO> userTeamOptional = this.teamService.findTeamByUserId(userId);
+
     if (userTeamOptional.isPresent())
     {
       return status(BAD_REQUEST, Json.toJson(ResponseBuilder

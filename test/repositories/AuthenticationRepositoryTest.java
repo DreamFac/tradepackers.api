@@ -2,7 +2,7 @@ package repositories;
 
 import static org.junit.Assert.*;
 
-import base.BaseAuthenticationTest;
+import base.BaseRepositoryTest;
 import constants.UserLoginStatus;
 import models.User;
 import models.security.Token;
@@ -15,7 +15,7 @@ import org.junit.Test;
 /**
  * Created by eduardo on 6/08/16.
  */
-public class AuthenticationRepositoryTest extends BaseAuthenticationTest
+public class AuthenticationRepositoryTest extends BaseRepositoryTest
 {
 
   @Test

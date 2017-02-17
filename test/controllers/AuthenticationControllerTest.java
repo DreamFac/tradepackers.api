@@ -1,7 +1,10 @@
 package controllers;
 
+import static play.mvc.Http.Status.OK;
+import static play.test.Helpers.BAD_REQUEST;
+import static play.test.Helpers.*;
 
-import base.BaseAuthenticationTest;
+import base.BaseControllerTest;
 import constants.StatusCode;
 import dtos.TokenDTO;
 import play.Logger;
@@ -15,18 +18,11 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import static play.mvc.Http.Status.OK;
-import static play.test.Helpers.BAD_REQUEST;
-import static play.test.Helpers.*;
-
 /**
  * Created by eduardo on 10/08/16.
  */
-public class AuthenticationControllerTest extends BaseAuthenticationTest
+public class AuthenticationControllerTest extends BaseControllerTest
 {
-
-  final String LOGIN = routes.AuthController.login().url();
-  final String SIGNUP = routes.AuthController.signUp().url();
 
   @Test
   public void testSignup()
@@ -46,7 +42,6 @@ public class AuthenticationControllerTest extends BaseAuthenticationTest
     Assert.assertTrue(result.status() == OK);
     Assert.assertTrue(tokenDTO != null);
     Assert.assertTrue(!tokenDTO.getToken().isEmpty());
-
   }
 
   @Test
@@ -65,7 +60,6 @@ public class AuthenticationControllerTest extends BaseAuthenticationTest
     final JsonNode json = Json.parse(contentAsString(result));
     Assert.assertTrue(result.status() == StatusCode.USER_EXISTS);
     Logger.error("Error Message: {}", json.toString());
-
   }
 
   @Test
@@ -103,6 +97,5 @@ public class AuthenticationControllerTest extends BaseAuthenticationTest
     final JsonNode json = Json.parse(contentAsString(result));
     Assert.assertTrue(result.status() == BAD_REQUEST);
     Logger.error("Error Message: {}", json.toString());
-
   }
 }
