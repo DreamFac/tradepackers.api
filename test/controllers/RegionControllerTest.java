@@ -1,13 +1,11 @@
 package controllers;
 
+import static org.junit.Assert.*;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.*;
 
 import base.BaseAuthenticationTest;
-import dtos.BadgeDTO;
 import dtos.RegionDTO;
-import dtos.TeamDTO;
-import models.User;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.Http;
@@ -16,51 +14,46 @@ import repositories.interfaces.UserRepository;
 
 import javax.inject.Inject;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Created by eduardo on 10/08/16.
  */
-public class TeamControllerTest extends BaseAuthenticationTest
+public class RegionControllerTest extends BaseAuthenticationTest
 {
 
   @Inject
   UserRepository userRepository;
 
   @Test
-  public void testTeam()
+  public void testRegionCreate()
   {
     final RegionDTO regionDTO = RegionDTO.builder()
         .name("Occidente")
         .build();
 
-    final BadgeDTO badgeDTO = BadgeDTO
-        .builder()
-        .imgUrl("img")
-        .region(regionDTO)
-        .build();
-
-    final TeamDTO teamDTO = TeamDTO
-        .builder()
-        .abbreviation("GT")
-        .badge(badgeDTO)
-        .name("Guatemala")
-        .build();
-
-    final User user = this.userRepository.get().stream().findFirst().get();
     final Http.RequestBuilder requestBuilder = new Http.RequestBuilder();
-    requestBuilder.bodyJson(Json.toJson(teamDTO));
+    requestBuilder.bodyJson(Json.toJson(regionDTO));
     requestBuilder.method(POST);
-    requestBuilder.uri(routes.TeamController.create(user.getId()).url());
+    requestBuilder.uri(routes.RegionController.create().url());
 
     final Result result = route(requestBuilder);
-    final TeamDTO teamDTOResponse = Json.fromJson(Json.parse(contentAsString(result)),
-        TeamDTO.class);
+    final RegionDTO teamDTOResponse = Json.fromJson(Json.parse(contentAsString(result)),
+        RegionDTO.class);
 
     Logger.debug("teamDTO: [{}]", teamDTOResponse);
 
-    Assert.assertTrue(result.status() == OK);
+    assertTrue(result.status() == OK);
+
+    final Http.RequestBuilder requestBuilderGet = new Http.RequestBuilder();
+    requestBuilder.method(GET);
+    requestBuilder.uri(routes.RegionController.get().url());
+
+    final Result resultGet = route(requestBuilder);
+    final Object regionList = Json.fromJson(Json.parse(contentAsString(result)),
+        Object.class);
+
+    assertTrue(regionList != null);
 
   }
 

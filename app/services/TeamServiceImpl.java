@@ -21,7 +21,7 @@ import javax.inject.Inject;
 /**
  * Created by eduardo on 12/02/17.
  */
-public class TeamServiceImpl extends AbstractService<Team, TeamDTO> implements TeamService
+public class TeamServiceImpl extends AbstractService<Team> implements TeamService
 {
   TeamRepository teamRepository;
   BadgeRepository badgeRepository;

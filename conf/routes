@@ -16,5 +16,9 @@ GET         /social/:provider           @controllers.SocialAuthController.getLog
 GET         /users/:userId/teams        @controllers.TeamController.get(userId)
 POST        /users/:userId/teams        @controllers.TeamController.create(userId)
 
+#Region
+GET         /regions                    @controllers.RegionController.get()
+POST        /regions                    @controllers.RegionController.create()
+
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file               controllers.Assets.at(path="/public", file)

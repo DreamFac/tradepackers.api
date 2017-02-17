@@ -1,7 +1,6 @@
 package services;
 
 import constants.UserLoginStatus;
-import dtos.UserDTO;
 import models.User;
 import models.security.Token;
 import play.Logger;
@@ -24,7 +23,7 @@ import org.joda.time.DateTime;
  * Created by eduardo on 4/08/16.
  */
 @Singleton
-public class UserAuthServiceImpl extends AbstractService<User, UserDTO> implements UserAuthService
+public class UserAuthServiceImpl extends AbstractService<User> implements UserAuthService
 {
 
   UserRepository userRepository;
@@ -105,7 +104,6 @@ public class UserAuthServiceImpl extends AbstractService<User, UserDTO> implemen
       Logger.error("[{}] Something went wrong couldn't login", getClass());
       return Optional.empty();
     }
-    Logger.debug("[{}] User with id: {} successfully logedIn.", getClass(), user.getId());
     return Optional.ofNullable(token);
   }
 
@@ -169,15 +167,5 @@ public class UserAuthServiceImpl extends AbstractService<User, UserDTO> implemen
     return this.save(user);
   }
 
-  @Override
-  public UserDTO entityToDto(final User entity)
-  {
-    return null;
-  }
 
-  @Override
-  public User dtoToEntity(final UserDTO dto)
-  {
-    return null;
-  }
 }
