@@ -114,6 +114,7 @@ public class AuthController extends Controller
     final TokenDTO tokenDTO = TokenDTO.builder()
         .token(token.getAuthToken())
         .expirationDate(token.getExpirationDate())
+        .userId(token.getUser().getId())
         .build();
     
     return ok(Json.toJson(tokenDTO));

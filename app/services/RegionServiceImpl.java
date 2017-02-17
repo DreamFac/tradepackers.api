@@ -20,4 +20,5 @@ public class RegionServiceImpl extends AbstractService<Region> implements Region
     super(regionRepository);
     this.regionRepository = regionRepository;
   }
+
 }

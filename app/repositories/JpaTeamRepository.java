@@ -48,7 +48,7 @@ public class JpaTeamRepository extends JpaRepository<Team> implements TeamReposi
                       userId));
 
       final TypedQuery<Team> query = entityManager.createQuery(criteriaQuery);
-      return Optional.ofNullable(query.getSingleResult());
-    });
+      return query.getResultList();
+    }).stream().findFirst();
   }
 }

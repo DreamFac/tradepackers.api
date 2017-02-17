@@ -20,4 +20,6 @@ public class BadgeServiceImpl extends AbstractService<Badge> implements BadgeSer
     super(badgeRepository);
     this.badgeRepository = badgeRepository;
   }
+
+
 }

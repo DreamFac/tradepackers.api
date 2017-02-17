@@ -1,6 +1,7 @@
 package controllers;
 
 import static play.libs.Json.*;
+import static play.mvc.Http.Status.*;
 import static play.mvc.Results.*;
 
 import dtos.TeamDTO;
@@ -10,7 +11,9 @@ import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Result;
 import services.interfaces.TeamService;
+import utils.ResponseBuilder;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -30,6 +33,7 @@ public class TeamController
     this.formFactory = formFactory;
   }
 
+
   public Result get(final String userId)
   {
     final Optional<TeamDTO> teamDTOOptional = this.teamService.findTeamByUserId(userId);
@@ -39,9 +43,11 @@ public class TeamController
     }
     else
     {
-      return badRequest();
+      return status(NOT_FOUND, Json.toJson(ResponseBuilder
+          .buildErrorResponse(Arrays.asList("Couldn't login"), NOT_FOUND)));
     }
   }
+
 
   public Result create(final String userId)
   {
@@ -49,6 +55,13 @@ public class TeamController
     if (form.hasErrors())
     {
       return badRequest(form.errorsAsJson());
+    }
+
+    final Optional<TeamDTO> userTeamOptional = this.teamService.findTeamByUserId(userId);
+    if (userTeamOptional.isPresent())
+    {
+      return status(BAD_REQUEST, Json.toJson(ResponseBuilder
+          .buildErrorResponse(Arrays.asList("User already have a team asigned"), BAD_REQUEST)));
     }
     final TeamDTO teamDTO = form.get();
 
@@ -61,7 +74,8 @@ public class TeamController
     }
     else
     {
-      return badRequest();
+      return status(BAD_REQUEST, Json.toJson(ResponseBuilder
+          .buildErrorResponse(Arrays.asList("Couldn't assing a team to user"), BAD_REQUEST)));
     }
   }
 

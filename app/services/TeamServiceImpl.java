@@ -54,6 +54,7 @@ public class TeamServiceImpl extends AbstractService<Team> implements TeamServic
     return Optional.ofNullable(entityToDto(team.get()));
   }
 
+  @Override
   public TeamDTO entityToDto(final Team team)
   {
     final Badge badge = team.getBadge();
@@ -121,4 +122,5 @@ public class TeamServiceImpl extends AbstractService<Team> implements TeamServic
 
     return team;
   }
+
 }

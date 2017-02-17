@@ -104,7 +104,6 @@ public class UserAuthServiceImpl extends AbstractService<User> implements UserAu
       Logger.error("[{}] Something went wrong couldn't login", getClass());
       return Optional.empty();
     }
-    Logger.debug("[{}] User with id: {} successfully logedIn.", getClass(), user.getId());
     return Optional.ofNullable(token);
   }
 
@@ -167,4 +166,6 @@ public class UserAuthServiceImpl extends AbstractService<User> implements UserAu
     Logger.debug("[{}] Creating user: {}", getClass(), user.getEmail());
     return this.save(user);
   }
+
+
 }

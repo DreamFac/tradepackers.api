@@ -5,16 +5,20 @@
 # Home page
 
 #Security
-POST        /signup                   @controllers.AuthController.signUp()
-POST        /login                    @controllers.AuthController.login()
-GET         /logout                   @controllers.AuthController.logout()
+POST        /signup                     @controllers.AuthController.signUp()
+POST        /login                      @controllers.AuthController.login()
+GET         /logout                     @controllers.AuthController.logout()
 
-GET         /social/login             @controllers.SocialAuthController.socialLogin()
-GET         /social/:provider         @controllers.SocialAuthController.getLoginUrl(provider)
+GET         /social/login               @controllers.SocialAuthController.socialLogin()
+GET         /social/:provider           @controllers.SocialAuthController.getLoginUrl(provider)
 
 #Team
-GET         /user/:userId/team        @controllers.TeamController.get(userId)
-POST        /user/:userId/team        @controllers.TeamController.create(userId)
+GET         /users/:userId/teams        @controllers.TeamController.get(userId)
+POST        /users/:userId/teams        @controllers.TeamController.create(userId)
+
+#Region
+GET         /regions                    @controllers.RegionController.get()
+POST        /regions                    @controllers.RegionController.create()
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file             controllers.Assets.at(path="/public", file)
+GET         /assets/*file               controllers.Assets.at(path="/public", file)
