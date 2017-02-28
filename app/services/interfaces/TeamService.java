@@ -3,6 +3,7 @@ package services.interfaces;
 import dtos.TeamDTO;
 import models.Team;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -16,6 +17,6 @@ public interface TeamService extends GenericService<Team>
 
   Team dtoToEntity(
       TeamDTO teamDTO,
-      String userId);
+      String userId) throws NoSuchElementException;
 
 }

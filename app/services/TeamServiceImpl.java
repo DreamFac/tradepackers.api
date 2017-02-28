@@ -20,6 +20,7 @@ import services.interfaces.TeamService;
 import utils.ResponseBuilder;
 
 import java.util.Collections;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -87,8 +88,9 @@ public class TeamServiceImpl extends AbstractService<Team> implements TeamServic
 
   public Team dtoToEntity(
       final TeamDTO teamDTO,
-      final String userId)
+      final String userId) throws NoSuchElementException
   {
+
     final Team team = new Team();
     team.setAbreviation(teamDTO.getAbbreviation());
     Badge badge;
@@ -101,32 +103,56 @@ public class TeamServiceImpl extends AbstractService<Team> implements TeamServic
           .buildErrorResponse(Collections.singletonList("User not found"), NOT_FOUND)));
     }
 
-    if (teamDTO.getBadge().getId() != null)
+    if (teamDTO.getBadge() != null && teamDTO.getBadge().getId() != null)
     {
       final Optional<Badge> badgeOptional = this.badgeRepository.get(
           teamDTO.getBadge().getId().toString());
-      badge = badgeOptional.get();
+      if (badgeOptional.isPresent())
+      {
+        badge = badgeOptional.get();
+      }
+      else
+      {
+        throw new NoSuchElementException("Cannot find a badge for team");
+      }
     }
-    else
+    else if (teamDTO.getBadge() != null)
     {
       badge = new Badge();
       badge.setImgUrl(teamDTO.getBadge().getImgUrl());
 
-      if (teamDTO.getBadge().getRegion().getId() != null)
+      if (teamDTO.getBadge().getRegion() != null && teamDTO.getBadge().getRegion().getId() != null)
       {
         final Optional<Region> regionOptional = this.regionRepository.get(teamDTO.getBadge()
             .getRegion()
             .getId());
-        region = regionOptional.get();
+
+        if (regionOptional.isPresent())
+        {
+          region = regionOptional.get();
+        }
+        else
+        {
+          throw new NoSuchElementException("Cannot find a region for badge");
+        }
       }
-      else
+      else if (teamDTO.getBadge().getRegion() != null)
       {
         region = new Region();
         region.setName(teamDTO.getBadge().getRegion().getName());
         region = this.regionRepository.persist(region).get();
       }
+      else
+      {
+        throw new NoSuchElementException("Cannot find a region for badge");
+      }
       badge.setRegion(region);
       badge = this.badgeRepository.persist(badge).get();
+    }
+
+    else
+    {
+      throw new NoSuchElementException("Cannot find a badge for team");
     }
 
     team.setBadge(badge);

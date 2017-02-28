@@ -10,11 +10,13 @@ import models.Team;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
+import play.mvc.Http;
 import play.mvc.Result;
 import services.interfaces.TeamService;
 import utils.ResponseBuilder;
 
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -67,17 +69,25 @@ public class TeamController
     }
     final TeamDTO teamDTO = form.get();
 
-    final Optional<Team> teamOptional = this.teamService.save(
-        this.teamService.dtoToEntity(teamDTO, userId));
+    try
+    {
+      final Optional<Team> teamOptional = this.teamService.save(
+          this.teamService.dtoToEntity(teamDTO, userId));
 
-    if (teamOptional.isPresent())
-    {
-      return ok(toJson(this.teamService.entityToDto(teamOptional.get())));
+      if (teamOptional.isPresent())
+      {
+        return ok(toJson(this.teamService.entityToDto(teamOptional.get())));
+      }
+      else
+      {
+        return status(BAD_REQUEST, Json.toJson(ResponseBuilder
+            .buildErrorResponse(Arrays.asList("Couldn't assing a team to user"), BAD_REQUEST)));
+      }
     }
-    else
+    catch (NoSuchElementException e)
     {
-      return status(BAD_REQUEST, Json.toJson(ResponseBuilder
-          .buildErrorResponse(Arrays.asList("Couldn't assing a team to user"), BAD_REQUEST)));
+        return status(BAD_REQUEST,Json.toJson(ResponseBuilder
+            .buildErrorResponse(Arrays.asList("Couldn't assing a team to user: "+e.getMessage()), BAD_REQUEST)));
     }
   }
 
